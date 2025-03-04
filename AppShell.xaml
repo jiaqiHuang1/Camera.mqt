@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Camera.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:view="clr-namespace:Camera.View"
+    Shell.FlyoutBehavior="Flyout"
+    Title="Camera">
+
+    <FlyoutItem Title="MENU" Route="Menu">
+        <ShellContent 
+            ContentTemplate="{DataTemplate view:Menu}" 
+            Title="MENU"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Home">
+        <ShellContent 
+            ContentTemplate="{DataTemplate view:MainPage}" 
+            Route="MainPage" 
+            Title="Home"/>
+    </FlyoutItem>
+
+    <ShellItem>
+        <ShellContent 
+            ContentTemplate="{DataTemplate view:Setting_Wlan}" 
+            Route="Setting_Wlan"/>
+    </ShellItem>
+
+    <ShellItem>
+        <ShellContent 
+            ContentTemplate="{DataTemplate view:Cameralist}" 
+            Route="Cameralist"/>
+    </ShellItem>
+
+    <ShellItem>
+        <ShellContent 
+        ContentTemplate="{DataTemplate view:LivePage}" 
+        Route="LivePage"/>
+    </ShellItem>
+</Shell>

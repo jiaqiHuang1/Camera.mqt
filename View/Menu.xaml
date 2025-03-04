@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Camera.ViewModel"
+             x:Class="Camera.View.Menu"
+             Title="MENU">
+
+    <ContentPage.BindingContext>
+        <viewmodels:MenuViewModel/>
+    </ContentPage.BindingContext>
+
+    <Grid>
+        <!-- Define a Grid with 5 rows, each row is height-adaptive. -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Define a column with the width of the screen -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Buttons are centred and have a consistent width -->
+        <Button Text="📷 Camera" 
+                Command="{Binding CameraCommand}" 
+                IsVisible="True"
+                ImageSource="camera_icon.png" 
+                Grid.Row="1"
+                BackgroundColor="LightGreen"
+                HorizontalOptions="Center"
+                WidthRequest="200" 
+                Margin="20,10" />
+
+        <Button Text="📊 Analysis" 
+                Command="{Binding AnalysisCommand}" 
+                IsEnabled="{Binding IsAnalysisEnabled}"
+                ImageSource="analysis_icon.png" 
+                Grid.Row="2"
+                HorizontalOptions="Center"
+                BackgroundColor="LightGreen"
+                WidthRequest="200" 
+                Margin="20,10" />
+
+        <Button Text="🔴 Live" 
+                Command="{Binding LiveCommand}" 
+                IsEnabled="{Binding IsLiveEnabled}"
+                ImageSource="live_icon.png" 
+                Grid.Row="3"
+                HorizontalOptions="Center"
+                BackgroundColor="LightGreen"
+                WidthRequest="200" 
+                Margin="20,10" />
+
+        <Button Text="🔧 Control" 
+                Command="{Binding ControlCommand}" 
+                IsEnabled="{Binding IsControlEnabled}"
+                ImageSource="control_icon.png" 
+                Grid.Row="4"
+                HorizontalOptions="Center"
+                BackgroundColor="LightGreen"
+                WidthRequest="200"
+                Margin="20,10" />
+
+        <Button Text="⚙️ Setting" 
+                Command="{Binding SettingCommand}" 
+                ImageSource="setting_icon.png" 
+                Grid.Row="5"
+                HorizontalOptions="Center"
+                BackgroundColor="LightGreen"
+                WidthRequest="200" 
+                Margin="20,10" />
+    </Grid>
+</ContentPage>

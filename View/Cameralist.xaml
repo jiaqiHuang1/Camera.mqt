@@ -1,0 +1,116 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:Camera.ViewModel"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             x:Class="Camera.View.Cameralist"
+             Title="Camera List">
+
+    <ContentPage.BindingContext>
+        <!-- bind ViewModel -->
+        <viewmodel:CamerasViewModel />
+    </ContentPage.BindingContext>
+
+    <StackLayout>
+        <!-- Table Title -->
+        <Label Text="ViewList"
+               HorizontalOptions="Center"
+               FontSize="20"
+               FontAttributes="Bold"
+               Margin="0,10,0,10"/>
+
+        <!-- search term -->
+        <Grid Padding="10" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <!-- Search Icons -->
+                <ColumnDefinition Width="*" />
+                <!-- input box -->
+                <ColumnDefinition Width="Auto" />
+                <!-- Map/List Switch Button -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Search Icons -->
+            <Label Text="🔍"
+                   Grid.Column="0"
+                   VerticalOptions="Center"
+                   FontSize="16"/>
+
+            <!-- input box -->
+            <Entry Placeholder="Entry City Name"
+                   Grid.Column="1"
+                   Text="{Binding SearchCity, Mode=TwoWay}"
+                   VerticalOptions="Center"/>
+
+            <!-- Map/List Switch Button -->
+            <Button Text="{Binding MapButtonIcon}"
+                    Grid.Column="2"
+                    Command="{Binding ToggleMapCommand}"
+                    VerticalOptions="Center"/>
+        </Grid>
+
+        <!--  -->
+        <Label Text="{Binding StatusMessage}" 
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               FontAttributes="Bold"
+               Margin="0,10,0,10"/> 
+
+        <!-- Load Camera Button -->
+        <Button Text="Load Camera List"
+                Command="{Binding LoadCamerasCommand}"
+                HorizontalOptions="Center"
+                Margin="0,10,0,10"/>
+
+        <!-- Table content -->
+        <CollectionView ItemsSource="{Binding FilteredCameras}"
+                        IsVisible="{Binding IsListViewVisible}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedCamera, Mode=TwoWay}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <!-- Display per line Id、City 和 Street -->
+                    <Grid Padding="10" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <!-- Id -->
+                            <ColumnDefinition Width="*" />
+                            <!-- City -->
+                            <ColumnDefinition Width="*" />
+                            <!-- Street -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Id -->
+                        <Label Text="{Binding Id}" 
+                               Grid.Column="0"
+                               HorizontalOptions="Start"/>
+
+                        <!-- City -->
+                        <Label Text="{Binding City}" 
+                               Grid.Column="1"
+                               HorizontalOptions="Start"/>
+
+                        <!-- Street -->
+                        <Label Text="{Binding Street}" 
+                               Grid.Column="2"
+                               HorizontalOptions="Start"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Map -->
+        <maps:Map x:Name="CameraMap"
+                  IsVisible="{Binding IsMapViewVisible}"
+                  MapType="Street"
+                  VerticalOptions="FillAndExpand"/>
+
+
+        <!-- Connect Button -->
+        <Button Text="{Binding ConnectionButtonText}"
+            Command="{Binding ConnectionCommand}"
+            IsEnabled="{Binding IsConnectButtonEnabled}" 
+            HorizontalOptions="Center"
+            Margin="0,10,0,10"/>
+        
+    </StackLayout>
+</ContentPage>

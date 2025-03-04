@@ -1,0 +1,22 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:Camera.ViewModel"
+             x:Class="Camera.View.LivePage"
+             Title="LivePage">
+    <ContentPage.BindingContext>
+        <viewmodel:LivePageViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout>
+        <Label Text="{Binding StatusMessage}" />
+
+
+        <GraphicsView 
+            x:Name="VehicleGraphicsView"
+            Drawable="{Binding VehicleCanvas}" 
+            HeightRequest="400" 
+            WidthRequest="400" 
+            HorizontalOptions="Center"
+            VerticalOptions="Center"/>
+    </VerticalStackLayout>
+</ContentPage>

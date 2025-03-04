@@ -1,0 +1,92 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:Camera.ViewModel"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Camera.View.MainPage"
+             BackgroundColor="White">
+
+    <!-- Bind ViewModel -->
+    <ContentPage.BindingContext>
+        <viewmodel:TwoArcSlider/>
+    </ContentPage.BindingContext>
+
+    <!-- Main Grid Layout -->
+    <Grid Padding="0">
+        <Grid.RowDefinitions>
+            <!-- Video Stream Row -->
+            <RowDefinition Height="400"/>
+            <!-- Arc Sliders Row -->
+            <RowDefinition Height="400"/>
+        </Grid.RowDefinitions>
+
+        <!-- Video Stream Section -->
+        <WebView Grid.Row="0"
+                 HeightRequest="300"
+                 WidthRequest="400"
+                 Source="{Binding WebViewSource}" 
+                 VerticalOptions="Center"
+                 HorizontalOptions="Center"
+                 BackgroundColor="Black"
+                 Margin="20,20"/>
+
+        <!-- Arc Sliders Section -->
+        <Grid Grid.Row="1"
+              RowSpacing="20"
+              Padding="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- First Arc Slider -->
+            <Grid Grid.Row="0">
+                <GraphicsView x:Name="arcSlider"
+                              Drawable="{Binding SliderViewModel.ArcSliderDrawable}"
+                              StartInteraction="ArcSlider_StartInteraction"
+                              DragInteraction="ArcSlider_DragInteraction"
+                              EndInteraction="ArcSlider_EndInteraction"
+                              WidthRequest="300"
+                              HeightRequest="170"
+                              VerticalOptions="Center"
+                              HorizontalOptions="Center"/>
+
+                <!-- Input Box for First Slider -->
+                <Entry x:Name="AngleEntry"
+                       Text="{Binding SliderViewModel.InputText}"
+                       IsVisible="{Binding SliderViewModel.IsEntryVisible}"
+                       Completed="AngleEntry_Completed"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       WidthRequest="100"
+                       HorizontalTextAlignment="Center"
+                       Keyboard="Default"
+                       ReturnType="Done"/>
+            </Grid>
+
+            <!-- Second Arc Slider -->
+            <Grid Grid.Row="1">
+                <GraphicsView x:Name="arcSlider_Ver"
+                              Drawable="{Binding Slider_VerViewModel.ArcSlider_VerDrawable}"
+                              StartInteraction="ArcSlider_Ver_StartInteraction"
+                              DragInteraction="ArcSlider_Ver_DragInteraction"
+                              EndInteraction="ArcSlider_Ver_EndInteraction"
+                              WidthRequest="300"
+                              HeightRequest="170"
+                              VerticalOptions="Center"
+                              HorizontalOptions="Center"/>
+
+                <!-- Input Box for Second Slider -->
+                <Entry x:Name="AngleEntry_Ver"
+                       Text="{Binding Slider_VerViewModel.InputText}"
+                       IsVisible="{Binding Slider_VerViewModel.IsEntryVisible}"
+                       Completed="AngleEntry_Ver_Completed"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       WidthRequest="100"
+                       HorizontalTextAlignment="Center"
+                       Keyboard="Default"
+                       ReturnType="Done"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>
