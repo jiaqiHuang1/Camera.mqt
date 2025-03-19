@@ -50,13 +50,28 @@ namespace Camera.Drawables
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine($"[Info] Loading image: {fileName}");
+
                 using Stream stream = FileSystem.OpenAppPackageFileAsync(fileName).Result;
-                return PlatformImage.FromStream(stream);
+                IImage image = PlatformImage.FromStream(stream);
+
+                if (image == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Error] Image is null: {fileName}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Success] Image loaded successfully: {fileName}");
+                }
+
+                return image;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[Exception] Error loading image {fileName}: {ex.Message}");
                 return null;
             }
         }
+
     }
 }
