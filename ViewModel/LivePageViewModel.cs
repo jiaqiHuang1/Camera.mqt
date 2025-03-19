@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Microsoft.Maui.Dispatching;
 using MySqlConnector;
 using Camera.Model;
 using Camera.Datebase;
@@ -23,29 +24,29 @@ namespace Camera.ViewModel
             _databaseService = new DatebaseService(connectionString);
 
             Vehicles = new ObservableCollection<VehiclesInfo>();
-            Vehicles.CollectionChanged += (s, e) => InvalidateGraphicsView(); // Listens for data changes and automatically refreshes the `GraphicsView`.
+            VehicleCanvas = new VehicleDrawable(Vehicles); // Responsible for rendering only
 
-            VehicleCanvas = new VehicleDrawable(Vehicles); //  The `Drawable` is only responsible for drawing.
+            // Listen for data changes because the UI needs to refresh when the data updates
+            Vehicles.CollectionChanged += (s, e) => InvalidateGraphicsView();
 
             LoadVehicles();
 
-            // Timer automatically updates every 0.5 seconds
+            // Reloads vehicle data every 1 second because periodic updates are required
             _autoUpdateTimer = Application.Current.Dispatcher.CreateTimer();
+            //_autoUpdateTimer.Interval = TimeSpan.FromSeconds(1);
             _autoUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
-            _autoUpdateTimer.Tick += (s, e) =>
-            {
-                Console.WriteLine("🚀 timer-triggered LoadVehicles()");
-                LoadVehicles();
-            };
+            _autoUpdateTimer.Tick += (s, e) => LoadVehicles();
             _autoUpdateTimer.Start();
         }
 
         public void LoadVehicles()
         {
-            Console.WriteLine($"LoadVehicles() invoked: {DateTime.Now}");
-            Vehicles.Clear();
-            StatusMessage = "Loading vehicle information...";
-            OnPropertyChanged(nameof(StatusMessage));
+            Application.Current.Dispatcher.Dispatch(() =>
+            {
+                Vehicles.Clear();
+                StatusMessage = "Loading vehicle information...";
+                OnPropertyChanged(nameof(StatusMessage));
+            });
 
             try
             {
@@ -57,9 +58,11 @@ namespace Camera.ViewModel
                     using (var command = new MySqlCommand(query, connection))
                     using (var reader = command.ExecuteReader())
                     {
+                        List<VehiclesInfo> tempVehicles = new();
+
                         while (reader.Read())
                         {
-                            Vehicles.Add(new VehiclesInfo
+                            tempVehicles.Add(new VehiclesInfo
                             {
                                 Id = reader.GetInt32("id"),
                                 X = reader.GetDouble("position_x"),
@@ -69,19 +72,29 @@ namespace Camera.ViewModel
                                 Type = reader.GetInt32("type")
                             });
                         }
+
+                        // Update UI thread because `Vehicles` is bound to the UI
+                        Application.Current.Dispatcher.Dispatch(() =>
+                        {
+                            foreach (var vehicle in tempVehicles)
+                            {
+                                Vehicles.Add(vehicle);
+                            }
+
+                            StatusMessage = "Vehicle information loaded successfully";
+                            OnPropertyChanged(nameof(StatusMessage));
+                            InvalidateGraphicsView();
+                        });
                     }
                 }
-
-                StatusMessage = "Vehicle information loaded successfully";
-                OnPropertyChanged(nameof(Vehicles));
-                OnPropertyChanged(nameof(StatusMessage));
-
-                InvalidateGraphicsView();
             }
             catch (Exception ex)
             {
-                StatusMessage = $"failed to load: {ex.Message}";
-                OnPropertyChanged(nameof(StatusMessage));
+                Application.Current.Dispatcher.Dispatch(() =>
+                {
+                    StatusMessage = $"Failed to load: {ex.Message}";
+                    OnPropertyChanged(nameof(StatusMessage));
+                });
             }
         }
 
@@ -89,18 +102,12 @@ namespace Camera.ViewModel
         {
             Application.Current.Dispatcher.Dispatch(() =>
             {
-                if (Application.Current?.MainPage is not null)
+                var currentPage = Application.Current.MainPage?.Navigation?.NavigationStack.LastOrDefault();
+                var graphicsView = currentPage?.FindByName<GraphicsView>("VehicleGraphicsView");
+
+                if (graphicsView != null)
                 {
-                    var graphicsView = Application.Current.MainPage.FindByName<GraphicsView>("VehicleGraphicsView");
-                    if (graphicsView != null)
-                    {
-                        Console.WriteLine(" trig GraphicsView Invalidate()");
-                        graphicsView.Invalidate();  
-                    }
-                    else
-                    {
-                        Console.WriteLine("⚠️ not found GraphicsView");
-                    }
+                    graphicsView.Invalidate(); // Triggers a redraw because `GraphicsView` needs to update its content
                 }
             });
         }

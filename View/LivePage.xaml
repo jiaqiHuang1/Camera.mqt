@@ -7,9 +7,7 @@
         <viewmodel:LivePageViewModel />
     </ContentPage.BindingContext>
 
-    <VerticalStackLayout>
-        <Label Text="{Binding StatusMessage}" />
-
+    <Grid>
 
         <GraphicsView 
             x:Name="VehicleGraphicsView"
@@ -18,5 +16,5 @@
             WidthRequest="400" 
             HorizontalOptions="Center"
             VerticalOptions="Center"/>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

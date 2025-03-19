@@ -53,15 +53,18 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-		<MauiImage Update="Resources\Images\car.png" Resize="True"/>
-		<MauiImage Update="Resources\Images\bicycle.png" Resize="True"/>
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Remove="Resources\Images\bicycle.png" />
+	  <MauiImage Remove="Resources\Images\car.png" />
+	  <MauiImage Remove="Resources\Images\dotnet_bot.png" />
 	</ItemGroup>
 
 	
@@ -86,6 +89,12 @@
 	  <EmbeddedResource Include="appsettings.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiAsset Include="Resources\Images\bicycle.png" Resize="True" />
+	  <MauiAsset Include="Resources\Images\car.png" Resize="True" />
+	  <MauiAsset Include="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
 	</ItemGroup>
 
 	<ItemGroup>
