@@ -36,7 +36,7 @@ namespace Camera.View
         private void UpdateMapPins(IEnumerable<CameraInfo> cameras)
         {
             // Clear existing pins on the map
-            CameraMap.Pins.Clear();
+          //  CameraMap.Pins.Clear();
 
             // Add camera location pins
             foreach (var camera in cameras)
@@ -50,7 +50,7 @@ namespace Camera.View
                         Location = position,
                         Type = PinType.Place
                     };
-                    CameraMap.Pins.Add(pin);
+                  //  CameraMap.Pins.Add(pin);
                 }
             }
 
@@ -61,7 +61,7 @@ namespace Camera.View
                 if (double.TryParse(firstCamera.PositionLat, out double firstLat) && double.TryParse(firstCamera.PositionLong, out double firstLon))
                 {
                     var firstPosition = new Location(firstLat, firstLon);
-                    CameraMap.MoveToRegion(MapSpan.FromCenterAndRadius(firstPosition, Distance.FromKilometers(10)));
+                  //  CameraMap.MoveToRegion(MapSpan.FromCenterAndRadius(firstPosition, Distance.FromKilometers(10)));
                 }
             }
         }

@@ -98,11 +98,11 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Map -->
+        <!-- Map 
         <maps:Map x:Name="CameraMap"
                   IsVisible="{Binding IsMapViewVisible}"
                   MapType="Street"
-                  VerticalOptions="FillAndExpand"/>
+                  VerticalOptions="FillAndExpand"/>-->
 
 
         <!-- Connect Button -->

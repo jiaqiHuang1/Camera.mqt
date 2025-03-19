@@ -17,7 +17,7 @@ namespace Camera
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkitMediaElement()
-                .UseMauiMaps()
+               // .UseMauiMaps()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
