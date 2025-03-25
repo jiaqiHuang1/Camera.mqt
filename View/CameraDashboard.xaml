@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:Camera.ViewModel"
+    x:Class="Camera.View.CameraDashboard"
+    Title="Camera Dashboard">
+
+    <ContentPage.BindingContext>
+        <viewmodel:CameraDashboardViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="400"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <!-- Search -->
+        <Entry Grid.Row="1"
+               Text="{Binding SearchText}"
+               Placeholder="Search for a location..."
+               Margin="0,5"/>
+
+        <!-- Map -->
+        <WebView x:Name="CameraWebView"
+                 Grid.Row="2"
+                 Source="about:blank" />
+
+        <!-- Camera Table -->
+        <CollectionView ItemsSource="{Binding FilteredCameras}" 
+                        SelectedItem="{Binding SelectedCamera, Mode=TwoWay}"
+                        SelectionMode="Single"
+                        Grid.Row="3">
+            <CollectionView.Header>
+                <Grid BackgroundColor="#f0f0f0" Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Text="Location" FontAttributes="Bold" />
+                    <Label Text="IP Address" FontAttributes="Bold" Grid.Column="1" />
+                    <Label Text="Port" FontAttributes="Bold" Grid.Column="2" />
+                </Grid>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.Column="0">
+                            <Label Text="{Binding City}" FontAttributes="Bold" />
+                            <Label Text="{Binding Street}" FontSize="12" TextColor="Gray"/>
+                        </StackLayout>
+                        <Label Text="{Binding IpAddress}" Grid.Column="1" />
+                        <Label Text="{Binding Port}" Grid.Column="2" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

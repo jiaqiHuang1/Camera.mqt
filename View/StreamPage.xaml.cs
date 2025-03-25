@@ -2,11 +2,11 @@
 
 namespace Camera.View
 {
-    public partial class MainPage : ContentPage
+    public partial class StreamPage : ContentPage
     {
         private TwoArcSlider _viewModel;
 
-        public MainPage(TwoArcSlider viewModel)
+        public StreamPage(TwoArcSlider viewModel)
         {
             InitializeComponent();
             //_viewModel = BindingContext as TwoArcSlider;

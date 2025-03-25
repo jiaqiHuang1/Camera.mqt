@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Camera Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+        }
+
+        .leaflet-popup-content-wrapper {
+            width: 300px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 4px 2px 0 0;
+            width: 50px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // 初始化地图
+        var map = L.map('map').setView([49.4401, 7.7491], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // 存储所有摄像头 Marker
+        var cameraMarkers = [];
+
+        // 添加摄像头 Marker 的函数（由 .NET 动态调用）
+        window.addCameraMarker = function (id, city, street, ip, port, lat, lng) {
+            var popupContent = `
+              <b>${city} - ${street}</b><br/>
+              IP: ${ip}:${port}<br/>
+              <div style="display: flex; flex-wrap: nowrap; gap: 4px; justify-content: flex-start; margin-top: 8px;">
+                <div class="button" onclick="onStream('${id}')">Stream</div>
+                <div class="button" onclick="onLive('${id}')">Live</div>
+                <div class="button" onclick="onAnalyse('${id}')">Analyse</div>
+              </div>
+            `;
+
+
+
+            var marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
+            cameraMarkers.push({ id: id, marker: marker });
+        };
+
+        // 地图居中到摄像头
+        window.focusCamera = function (lat, lng) {
+            map.setView([lat, lng], 17);
+        };
+
+        // 点击按钮 → 跳转自定义 URL，供 .NET 拦截
+        function onStream(id) {
+            window.location.href = `cameracommand://stream?id=${id}`;
+        }
+
+        function onLive(id) {
+            window.location.href = `cameracommand://live?id=${id}`;
+        }
+
+        function onAnalyse(id) {
+            window.location.href = `cameracommand://analyse?id=${id}`;
+        }
+    </script>
+</body>
+</html>

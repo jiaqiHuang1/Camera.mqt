@@ -92,12 +92,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="View\CameraDashboard.xaml.cs">
+	    <DependentUpon>CameraDashboard.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="View\StreamPage.xaml.cs">
+	    <DependentUpon>StreamPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="View\Setting_Wlan.xaml.cs">
 	    <DependentUpon>Setting_Wlan.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="View\CameraDashboard.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="View\Cameralist.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

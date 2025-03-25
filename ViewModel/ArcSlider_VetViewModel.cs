@@ -12,7 +12,7 @@ namespace Camera.ViewModel
         // Model instance to store state
         private readonly ArcSliderModel _model;
         private readonly DatebaseService _databaseService;
-        private readonly CamerasViewModel _camerasViewModel;
+        private readonly CameraDashboardViewModel _cameraDashboardViewModel;
 
         private int _selectedCameraId;
         public int SelectedCameraId
@@ -42,9 +42,9 @@ namespace Camera.ViewModel
                     RequestRedraw?.Invoke();
 
                     // Update database (make sure SelectedCamera is not null)
-                    if (_camerasViewModel.SelectedCamera != null)
+                    if (_cameraDashboardViewModel.SelectedCamera != null)
                     {
-                        UpdateAngleInDatabase(_camerasViewModel.SelectedCamera.Id);
+                        UpdateAngleInDatabase(_cameraDashboardViewModel.SelectedCamera.Id);
                     }
                 }
             }
@@ -118,14 +118,14 @@ namespace Camera.ViewModel
             ArcSlider_VerDrawable = new ArcSlider_VerDrawable(this);
 
             // Get CamerasViewModel via Service
-            _camerasViewModel = MauiProgram.Services.GetService<CamerasViewModel>();
+            _cameraDashboardViewModel = MauiProgram.Services.GetService<CameraDashboardViewModel>();
 
             _databaseService = new DatebaseService("server=192.168.31.151;port=3306;database=traffic_analysis;user=root;password=123456;");
 
             // Listen for CamerasViewModel.SelectedCamera changes.
-            if (_camerasViewModel != null)
+            if (_cameraDashboardViewModel != null)
             {
-                _camerasViewModel.PropertyChanged += (sender, e) =>
+                _cameraDashboardViewModel.PropertyChanged += (sender, e) =>
                 {
                     if (e.PropertyName == nameof(CamerasViewModel.SelectedCamera))
                     {
@@ -145,9 +145,9 @@ namespace Camera.ViewModel
         //  Update `SelectedCameraId` when `SelectedCamera` changes.
         private void UpdateSelectedCamera()
         {
-            if (_camerasViewModel.SelectedCamera != null)
+            if (_cameraDashboardViewModel.SelectedCamera != null)
             {
-                SelectedCameraId = _camerasViewModel.SelectedCamera.Id;
+                SelectedCameraId = _cameraDashboardViewModel.SelectedCamera.Id;
             }
         }
 

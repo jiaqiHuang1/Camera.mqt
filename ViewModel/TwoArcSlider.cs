@@ -5,7 +5,7 @@ namespace Camera.ViewModel
 {
     public class TwoArcSlider : INotifyPropertyChanged
     {
-        private readonly CamerasViewModel _camerasViewModel;
+        private readonly CameraDashboardViewModel _cameraDashboardViewModel;
         // Two independent slider ViewModels
         private ArcSliderViewModel _sliderViewModel;
         public ArcSliderViewModel SliderViewModel
@@ -59,15 +59,15 @@ namespace Camera.ViewModel
             Slider_VerViewModel = new ArcSlider_VerViewModel();
 
             // **Get from Service Locator CamerasViewModel**
-            _camerasViewModel = MauiProgram.Services.GetService<CamerasViewModel>();
+            _cameraDashboardViewModel = MauiProgram.Services.GetService<CameraDashboardViewModel>();
 
 
-            if (_camerasViewModel != null)
+            if (_cameraDashboardViewModel != null)
             {
                 // **Listening for CamerasViewModel.WebViewSource changes**
-                _camerasViewModel.PropertyChanged += (sender, e) =>
+                _cameraDashboardViewModel.PropertyChanged += (sender, e) =>
                 {
-                    if (e.PropertyName == nameof(CamerasViewModel.WebViewSource))
+                    if (e.PropertyName == nameof(CameraDashboardViewModel.WebViewSource))
                     {
                         UpdateWebViewSource();
                     }
@@ -86,7 +86,7 @@ namespace Camera.ViewModel
         // **update WebViewSource**
         private void UpdateWebViewSource()
         {
-            WebViewSource = _camerasViewModel?.WebViewSource;
+            WebViewSource = _cameraDashboardViewModel?.WebViewSource;
         }
 
         // Event to request redraw for the entire view

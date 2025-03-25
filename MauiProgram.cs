@@ -30,14 +30,20 @@ namespace Camera
             // Register MenuViewModel as a singleton
             builder.Services.AddSingleton<MenuViewModel>();
 
+            // Register CameraDashboardViewModel as a singleton
+            builder.Services.AddSingleton<CameraDashboardViewModel>();
+
             // Register TwoArcSlider as a single case
             builder.Services.AddSingleton<TwoArcSlider>();
 
             // Sign up for the Cameralist page
             builder.Services.AddTransient<Cameralist>();
 
-            // Register MainPage page
-            builder.Services.AddTransient<MainPage>();
+            // Sign up for the MainPage page
+            builder.Services.AddTransient<StreamPage>();
+
+            // Sign up for the CameraDashboard page
+            builder.Services.AddTransient<CameraDashboard>();
 
 
 
