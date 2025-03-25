@@ -28,7 +28,6 @@
             font-size: 13px;
             white-space: nowrap;
         }
-
     </style>
 </head>
 <body>
@@ -36,39 +35,37 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 初始化地图
+        // Initialize the map
         var map = L.map('map').setView([49.4401, 7.7491], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19
         }).addTo(map);
 
-        // 存储所有摄像头 Marker
+        // Store all camera markers
         var cameraMarkers = [];
 
-        // 添加摄像头 Marker 的函数（由 .NET 动态调用）
+        // Function to add a camera marker (called dynamically by .NET)
         window.addCameraMarker = function (id, city, street, ip, port, lat, lng) {
             var popupContent = `
-              <b>${city} - ${street}</b><br/>
-              IP: ${ip}:${port}<br/>
-              <div style="display: flex; flex-wrap: nowrap; gap: 4px; justify-content: flex-start; margin-top: 8px;">
-                <div class="button" onclick="onStream('${id}')">Stream</div>
-                <div class="button" onclick="onLive('${id}')">Live</div>
-                <div class="button" onclick="onAnalyse('${id}')">Analyse</div>
-              </div>
-            `;
-
-
+                      <b>${city} - ${street}</b><br/>
+                      IP: ${ip}:${port}<br/>
+                      <div style="display: flex; flex-wrap: nowrap; gap: 4px; justify-content: flex-start; margin-top: 8px;">
+                        <div class="button" onclick="onStream('${id}')">Stream</div>
+                        <div class="button" onclick="onLive('${id}')">Live</div>
+                        <div class="button" onclick="onAnalyse('${id}')">Analyse</div>
+                      </div>
+                    `;
 
             var marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
             cameraMarkers.push({ id: id, marker: marker });
         };
 
-        // 地图居中到摄像头
+        // Function to center the map to a specific camera location
         window.focusCamera = function (lat, lng) {
             map.setView([lat, lng], 17);
         };
 
-        // 点击按钮 → 跳转自定义 URL，供 .NET 拦截
+        // Button click → trigger custom URL to be intercepted by .NET
         function onStream(id) {
             window.location.href = `cameracommand://stream?id=${id}`;
         }
