@@ -10,9 +10,9 @@ namespace Camera.ViewModel
     public class CameraDashboardViewModel : INotifyPropertyChanged
     {
         private readonly DatebaseService _databaseService;
-        private WebView _webView;
+        private WebView _webView; // Reference to WebView, for calling JavaScript from ViewModel
 
-        // WebView source
+        // WebView stream URL
         private string _webViewSource;
         public string WebViewSource
         {
@@ -27,7 +27,7 @@ namespace Camera.ViewModel
             }
         }
 
-        // Selected camera
+        // Currently selected camera (e.g., from table)
         private CameraInfo _selectedCamera;
         public CameraInfo SelectedCamera
         {
@@ -39,6 +39,7 @@ namespace Camera.ViewModel
                     _selectedCamera = value;
                     OnPropertyChanged();
 
+                    // When user selects a camera from the table, center the map on it
                     if (_selectedCamera != null &&
                         double.TryParse(_selectedCamera.PositionLat, out double lat) &&
                         double.TryParse(_selectedCamera.PositionLong, out double lon) &&
@@ -52,6 +53,7 @@ namespace Camera.ViewModel
 
         public CameraDashboardViewModel()
         {
+            // Set up database connection string
             var connectionString = "server=192.168.31.151;port=3306;database=traffic_analysis;user=root;password=123456;";
             _databaseService = new DatebaseService(connectionString);
 
@@ -60,6 +62,7 @@ namespace Camera.ViewModel
             LoadCamerasFromDatabase();
         }
 
+        // Bind WebView to ViewModel so JavaScript can be called directly
         public void SetWebView(WebView webView)
         {
             _webView = webView;
@@ -67,6 +70,7 @@ namespace Camera.ViewModel
 
             _webView.Navigating += async (s, e) =>
             {
+                // Intercept custom scheme calls like: cameracommand://stream?id=1
                 if (e.Url.StartsWith("cameracommand://"))
                 {
                     e.Cancel = true;
@@ -94,12 +98,13 @@ namespace Camera.ViewModel
                     }
                     if (cmd == "analyse")
                     {
-                        
+                        // TODO: add analyse logic
                     }
                 }
             };
         }
 
+        // Load map.html content and inject into WebView
         private async void LoadMapHtml()
         {
             var stream = await FileSystem.OpenAppPackageFileAsync("map.html");
@@ -107,10 +112,11 @@ namespace Camera.ViewModel
             var html = await reader.ReadToEndAsync();
             _webView.Source = new HtmlWebViewSource { Html = html };
 
-            await Task.Delay(300);
+            await Task.Delay(300); // Wait for WebView to be fully ready
             UpdateFilteredAndMap();
         }
 
+        // Full list of cameras from DB
         private ObservableCollection<CameraInfo> _cameras;
         public ObservableCollection<CameraInfo> Cameras
         {
@@ -126,6 +132,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // Filtered camera list (based on search)
         private ObservableCollection<CameraInfo> _filteredCameras;
         public ObservableCollection<CameraInfo> FilteredCameras
         {
@@ -140,6 +147,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // Text typed into the search box
         private string _searchText;
         public string SearchText
         {
@@ -155,10 +163,12 @@ namespace Camera.ViewModel
             }
         }
 
+        // Update table and map based on filter
         private void UpdateFilteredAndMap()
         {
             if (Cameras == null || Cameras.Count == 0 || _webView == null) return;
 
+            // Filter camera list
             var filtered = string.IsNullOrWhiteSpace(SearchText)
                 ? Cameras
                 : new ObservableCollection<CameraInfo>(
@@ -170,7 +180,7 @@ namespace Camera.ViewModel
             if (FilteredCameras.Count == 0)
                 return;
 
-            // 自动居中到第一个符合条件的摄像头
+            // Focus map on the first filtered camera
             var first = FilteredCameras.First();
             if (double.TryParse(first.PositionLat, out double centerLat) &&
                 double.TryParse(first.PositionLong, out double centerLon))
@@ -178,7 +188,7 @@ namespace Camera.ViewModel
                 _webView.Eval($"focusCamera({centerLat}, {centerLon});");
             }
 
-
+            // Re-render markers on map
             foreach (var cam in FilteredCameras)
             {
                 if (double.TryParse(cam.PositionLat, out double lat) &&
@@ -190,6 +200,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // Read camera data from MySQL
         public void LoadCamerasFromDatabase()
         {
             try
@@ -221,15 +232,14 @@ namespace Camera.ViewModel
             }
             catch (Exception ex)
             {
-                // ✅ 日志可选：输出错误到 Debug 或日志系统
+                // Log error, but don't crash UI
                 System.Diagnostics.Debug.WriteLine($"[DB ERROR] {ex.Message}");
-
-                // ✅ 不抛出异常，不阻止 UI 加载
                 Cameras.Clear();
                 FilteredCameras.Clear();
             }
         }
 
+        // Update WebView source for streaming
         private void UpdateWebViewSource(string ip, string port)
         {
             if (!string.IsNullOrEmpty(ip) && !string.IsNullOrEmpty(port))
@@ -240,13 +250,15 @@ namespace Camera.ViewModel
             {
                 WebViewSource = null;
             }
+
             WebViewSourceUpdated?.Invoke(this, WebViewSource);
             OnPropertyChanged(nameof(WebViewSource));
         }
-        // Event to notify WebView source update
+
+        // Notify other components when WebView source changes
         public event EventHandler<string> WebViewSourceUpdated;
 
-
+        // Property change notification
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string prop = null)
         {
