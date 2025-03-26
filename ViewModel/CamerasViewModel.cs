@@ -26,9 +26,9 @@ namespace Camera.ViewModel
 
         public CamerasViewModel()
         {
-            // Manually create DatabaseService in the constructor
-            var connectionString = "server=192.168.31.151;port=3306;database=traffic_analysis;user=root;password=123456;";
-            _databaseService = new DatebaseService(connectionString);
+            
+           
+            _databaseService = new DatebaseService();
 
             // Initialize camera list
             Cameras = new ObservableCollection<CameraInfo>();

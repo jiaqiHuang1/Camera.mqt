@@ -119,7 +119,7 @@ namespace Camera.ViewModel
             // Get CamerasViewModel via Service
             _cameraDashboardViewModel = MauiProgram.Services.GetService<CameraDashboardViewModel>();
 
-            _databaseService = new DatebaseService("server=192.168.31.151;port=3306;database=traffic_analysis;user=root;password=123456;");
+            _databaseService = new DatebaseService();
 
             //  Listen for CamerasViewModel.SelectedCamera changes.
             if (_cameraDashboardViewModel != null)
