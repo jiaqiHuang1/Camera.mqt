@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
-using Microsoft.Extensions.Configuration;
-using Camera.Datebase;
 using Camera.ViewModel;
-using System.Reflection;
 using Camera.View;
 
 namespace Camera

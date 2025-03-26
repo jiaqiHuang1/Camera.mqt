@@ -90,7 +90,7 @@ namespace Camera.ViewModel
                     {
                         SelectedCamera = cam;
                         UpdateWebViewSource(cam.IpAddress, cam.Port);
-                        await Shell.Current.GoToAsync("//MainPage");
+                        await Shell.Current.GoToAsync("//StreamPage");
                     }
                     else if (cmd == "live")
                     {
