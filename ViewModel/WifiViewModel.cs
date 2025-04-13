@@ -7,6 +7,10 @@ using MQTTnet;
 using MQTTnet.Protocol;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
+using MQTTnet.Client.Connecting;
+using MQTTnet.Client.Disconnecting;
+using MQTTnet.Client.Receiving;
+
 
 
 
@@ -14,10 +18,14 @@ namespace Camera.ViewModel
 {
     public class WifiViewModel : INotifyPropertyChanged
     {
+        // Model that holds all WiFi and MQTT-related data (e.g., SSID, password, server IP, port, connection state)
         private readonly WifiModel _wifiModel;
+
+        // MQTT client and its connection options
         private IMqttClient _mqttClient;
         private IMqttClientOptions _mqttOptions;
 
+        // Property for status messages shown to the user (e.g., connection status, errors)
         private string _statusMessage;
         public string StatusMessage
         {
@@ -32,6 +40,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // Indicates whether the client is connected to the MQTT broker
         public bool IsConnected
         {
             get => _wifiModel.IsConnected;
@@ -45,6 +54,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // Inverse of IsConnected, used to enable/disable UI elements accordingly
         public bool IsnotConnected
         {
             get => _wifiModel.IsnotConnected;
@@ -58,6 +68,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // WiFi SSID (user input)
         public string SSID
         {
             get => _wifiModel.SSID;
@@ -71,6 +82,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // WiFi password (user input)
         public string Password
         {
             get => _wifiModel.Password;
@@ -84,19 +96,23 @@ namespace Camera.ViewModel
             }
         }
 
+        // UI commands bound to buttons: connect, disconnect, and send WiFi credentials
         public ICommand ConnectToServerCommand { get; private set; }
         public ICommand DisconnectCommand { get; private set; }
         public ICommand SendWifiCredentialsCommand { get; private set; }
 
+        
         public WifiViewModel()
         {
             _wifiModel = new WifiModel();
 
+            // Initialize commands with async methods
             ConnectToServerCommand = new Command(async () => await ConnectToMqttBrokerAsync());
             DisconnectCommand = new Command(async () => await DisconnectFromMqttBrokerAsync());
             SendWifiCredentialsCommand = new Command(async () => await SendWifiCredentialsAsync());
         }
 
+        // Method to connect to the MQTT broker
         private async Task ConnectToMqttBrokerAsync()
         {
             StatusMessage = "Connecting to MQTT broker...";
@@ -105,27 +121,30 @@ namespace Camera.ViewModel
                 var factory = new MqttFactory();
                 _mqttClient = factory.CreateMqttClient();
 
-                _mqttClient.Connected += async (s, e) =>
+                // When the client successfully connects
+                _mqttClient.ConnectedHandler = new MqttClientConnectedHandlerDelegate(async e =>
                 {
                     StatusMessage = "Connected to MQTT broker!";
                     IsConnected = true;
                     IsnotConnected = false;
 
-                    // Subscribe to status topic
+                    // Subscribe to the topic where server sends connection results
                     await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder()
                         .WithTopic("wifi/status")
                         .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
                         .Build());
-                };
+                });
 
-                _mqttClient.Disconnected += (s, e) =>
+                // When the client disconnects from the broker
+                _mqttClient.DisconnectedHandler = new MqttClientDisconnectedHandlerDelegate(e =>
                 {
                     StatusMessage = "Disconnected from broker.";
                     IsConnected = false;
                     IsnotConnected = true;
-                };
+                });
 
-                _mqttClient.ApplicationMessageReceived += (s, e) =>
+                // When a message is received on any subscribed topic
+                _mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(e =>
                 {
                     var message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                     if (e.ApplicationMessage.Topic == "wifi/status")
@@ -134,13 +153,15 @@ namespace Camera.ViewModel
                             ? "WiFi connection successful!"
                             : "WiFi connection failed.";
                     }
-                };
+                });
 
+                // Set broker IP and port from model, and assign a unique client ID
                 _mqttOptions = new MqttClientOptionsBuilder()
                     .WithClientId("mobile-app")
                     .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort)
                     .Build();
 
+                // Start connection to MQTT broker
                 await _mqttClient.ConnectAsync(_mqttOptions);
             }
             catch (Exception ex)
@@ -149,6 +170,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // Publish WiFi credentials to the broker
         private async Task SendWifiCredentialsAsync()
         {
             if (string.IsNullOrWhiteSpace(SSID) || string.IsNullOrWhiteSpace(Password))
@@ -159,6 +181,7 @@ namespace Camera.ViewModel
 
             try
             {
+                // Build the JSON payload
                 var wifiConfig = new
                 {
                     ssid = SSID,
@@ -167,6 +190,7 @@ namespace Camera.ViewModel
 
                 string payload = JsonSerializer.Serialize(wifiConfig);
 
+                // Publish to topic "wifi/config"
                 var message = new MqttApplicationMessageBuilder()
                     .WithTopic("wifi/config")
                     .WithPayload(payload)
@@ -183,6 +207,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // Disconnect from the MQTT broker
         private async Task DisconnectFromMqttBrokerAsync()
         {
             try
@@ -202,6 +227,7 @@ namespace Camera.ViewModel
             }
         }
 
+        // INotifyPropertyChanged implementation to notify the UI when properties change
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
