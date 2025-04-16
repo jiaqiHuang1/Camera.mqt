@@ -16,7 +16,7 @@
             <!-- Video Stream Row -->
             <RowDefinition Height="400"/>
             <!-- Arc Sliders Row -->
-            <RowDefinition Height="400"/>
+            <RowDefinition Height="500"/>
         </Grid.RowDefinitions>
 
         <!-- Video Stream Section -->
@@ -36,10 +36,22 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <Button Grid.Row="0"
+                    Text="{Binding IsStreamingText}"
+                    Command="{Binding ToggleStreamingCommand}"
+                    BackgroundColor="LightBlue"
+                    TextColor="Black"
+                    CornerRadius="20"
+                    Margin="10"
+                    HeightRequest="50"
+                    WidthRequest="200"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
             <!-- First Arc Slider -->
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="1">
                 <GraphicsView x:Name="arcSlider"
                               Drawable="{Binding SliderViewModel.ArcSliderDrawable}"
                               StartInteraction="ArcSlider_StartInteraction"
@@ -64,7 +76,7 @@
             </Grid>
 
             <!-- Second Arc Slider -->
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="2">
                 <GraphicsView x:Name="arcSlider_Ver"
                               Drawable="{Binding Slider_VerViewModel.ArcSlider_VerDrawable}"
                               StartInteraction="ArcSlider_Ver_StartInteraction"

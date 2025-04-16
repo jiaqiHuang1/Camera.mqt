@@ -4,11 +4,22 @@ using Camera.Model;
 using Camera.Drawables;
 using Camera.Datebase;
 using MySqlConnector;
+using MQTTnet.Client.Connecting;
+using MQTTnet.Client.Options;
+using MQTTnet.Protocol;
+using MQTTnet;
+using System.Text.Json;
+using MQTTnet.Client;
+
 
 namespace Camera.ViewModel
 {
     public class ArcSlider_VerViewModel : INotifyPropertyChanged
     {
+        private readonly WifiModel _wifiModel;
+        // MQTT client and its connection options
+        private IMqttClient _mqttClient;
+        private IMqttClientOptions _mqttOptions;
         // Model instance to store state
         private readonly ArcSliderModel _model;
         private readonly DatebaseService _databaseService;
@@ -41,48 +52,49 @@ namespace Camera.ViewModel
                     OnPropertyChanged();
                     RequestRedraw?.Invoke();
 
-                    // Update database (make sure SelectedCamera is not null)
-                    if (_cameraDashboardViewModel.SelectedCamera != null)
-                    {
-                        UpdateAngleInDatabase(_cameraDashboardViewModel.SelectedCamera.Id);
-                    }
+                    //Update angle with mqtt (make sure SelectedCamera is not null)
+
+                    _ = UpdateAngleInPi();
+
                 }
             }
         }
 
-        private void UpdateAngleInDatabase(int cameraId)
+        private async Task UpdateAngleInPi()
         {
-            if (cameraId == 0) return; // Avoid invalid IDs
-
-            try
+            if (_mqttClient == null || !_mqttClient.IsConnected)
             {
-                using (var connection = _databaseService.GetConnection())
+                var factory = new MqttFactory();
+                _mqttClient = factory.CreateMqttClient();
+
+                _mqttClient.ConnectedHandler = new MqttClientConnectedHandlerDelegate(async e =>
                 {
-                    connection.Open();
+                    Console.WriteLine("Connected to MQTT Broker");
+                });
 
-                    string query = "UPDATE cameras SET pan_angle = @Angle WHERE id = @CameraId";
-                    using (var command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Angle", Angle);
-                        command.Parameters.AddWithValue("@CameraId", cameraId);
+                _mqttOptions = new MqttClientOptionsBuilder()
+                    .WithClientId("camera_control_app")
+                    .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort)
+                    .Build();
 
-                        int rowsAffected = command.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            Console.WriteLine($"✅ Camera {cameraId} angle updated successfully.");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"⚠️ No record updated. Check the camera ID.");
-                        }
-                    }
-                }
+                await _mqttClient.ConnectAsync(_mqttOptions);
             }
-            catch (Exception ex)
+
+            var panPayload = new
             {
-                Console.WriteLine($"❌ Database update failed: {ex.Message}");
-            }
+                tilt = Angle
+            };
+
+            string payload = JsonSerializer.Serialize(panPayload);
+
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic("cam/set/tilt") // 
+                .WithPayload(payload)
+                .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce)
+                .WithRetainFlag(false)
+                .Build();
+
+            await _mqttClient.PublishAsync(message);
         }
 
         // Input text for the angle entry
@@ -114,10 +126,11 @@ namespace Camera.ViewModel
         // Constructor to initialize the model and drawable
         public ArcSlider_VerViewModel()
         {
+            _wifiModel = new WifiModel();
             _model = new ArcSliderModel();
             ArcSlider_VerDrawable = new ArcSlider_VerDrawable(this);
 
-            // Get CamerasViewModel via Service
+            // Get CamerasDashboardViewModel via Service
             _cameraDashboardViewModel = MauiProgram.Services.GetService<CameraDashboardViewModel>();
 
             _databaseService = new DatebaseService();

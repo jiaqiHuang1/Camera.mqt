@@ -10,13 +10,14 @@ namespace Camera.View
         {
             InitializeComponent();
             //_viewModel = BindingContext as TwoArcSlider;
-            _viewModel = viewModel; 
-            BindingContext = _viewModel; 
+            _viewModel = viewModel;
+            BindingContext = _viewModel;
             // Subscribe to the RequestRedraw event, and call Invalidate() to redraw when the event is triggered
             _viewModel.SliderViewModel.RequestRedraw += () => arcSlider.Invalidate();
             _viewModel.Slider_VerViewModel.RequestRedraw += () => arcSlider_Ver.Invalidate();
         }
 
+        
         // During sliding interaction
         private void ArcSlider_DragInteraction(object sender, TouchEventArgs e)
         {
