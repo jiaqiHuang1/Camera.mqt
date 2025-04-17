@@ -14,9 +14,13 @@
     <Grid Padding="0">
         <Grid.RowDefinitions>
             <!-- Video Stream Row -->
-            <RowDefinition Height="400"/>
+            <RowDefinition Height="{Binding VideoRowHeight}"/>
+            <!-- Video Stream Toggle Row -->
+            <RowDefinition Height="Auto"/>
             <!-- Arc Sliders Row -->
             <RowDefinition Height="500"/>
+            <!-- pan/tilt speed slider -->
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Video Stream Section -->
@@ -27,10 +31,20 @@
                  VerticalOptions="Center"
                  HorizontalOptions="Center"
                  BackgroundColor="Black"
-                 Margin="20,20"/>
+                 Margin="20,20"
+                 IsVisible="{Binding IsVideoStreamVisible}"/>
 
+        <!-- Video Stream Toggle -->
+        <HorizontalStackLayout Grid.Row="1" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center" Spacing="10">
+                                <Label Text="Show Video Stream:" VerticalOptions="Center"/>
+                                <Switch IsToggled="{Binding IsVideoStreamVisible}" 
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"/>
+        </HorizontalStackLayout>
         <!-- Arc Sliders Section -->
-        <Grid Grid.Row="1"
+        <Grid Grid.Row="2"
               RowSpacing="20"
               Padding="10">
             <Grid.RowDefinitions>
@@ -40,8 +54,8 @@
             </Grid.RowDefinitions>
 
             <Button Grid.Row="0"
-                    Text="{Binding IsStreamingText}"
-                    Command="{Binding ToggleStreamingCommand}"
+                    Text="{Binding IsManualText}"
+                    Command="{Binding ToggleManualCommand}"
                     BackgroundColor="LightBlue"
                     TextColor="Black"
                     CornerRadius="20"
@@ -100,5 +114,54 @@
                        ReturnType="Done"/>
             </Grid>
         </Grid>
+        <VerticalStackLayout Grid.Row="3" 
+                    Spacing="20"
+                    Padding="0,0,0,0"
+                    HorizontalOptions="Center">
+
+            <!-- pan slider -->
+            <VerticalStackLayout Spacing="0"
+                        HorizontalOptions="Center">
+                <Label Text="Pan Speed" 
+               FontSize="14"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"/>
+
+                <Slider x:Name="panSlider"
+                Minimum="10"
+                Maximum="85"
+                WidthRequest="250"
+                HorizontalOptions="Center"
+                Value="{Binding Pan_SpeedValue}"/>
+
+                <Label Text="{Binding Source={x:Reference panSlider}, Path=Value, StringFormat='{0:F0}'}"
+               FontSize="14"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"
+               WidthRequest="50"/>
+            </VerticalStackLayout>
+
+            <!-- tilt slider -->
+            <VerticalStackLayout Spacing="0"
+                        HorizontalOptions="Center">
+                <Label Text="Tilt Speed" 
+               FontSize="14"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"/>
+
+                <Slider x:Name="tiltSlider"
+                Minimum="10"
+                Maximum="85"
+                WidthRequest="250"
+                HorizontalOptions="Center"
+                Value="{Binding Tilt_SpeedValue}"/>
+
+                <Label Text="{Binding Source={x:Reference tiltSlider}, Path=Value, StringFormat='{0:F0}'}"
+               FontSize="14"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"
+               WidthRequest="50"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

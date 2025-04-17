@@ -242,7 +242,8 @@ namespace Camera.ViewModel
         {
             if (!string.IsNullOrEmpty(ip) && !string.IsNullOrEmpty(port))
             {
-                WebViewSource = $"http://{ip}:{port}/stream";
+                //WebViewSource = $"http://{ip}:{port}/stream";
+                WebViewSource = $"http://{ip}:{port}/stream.html?src=scout_mini_1&mode=webrtc,mse,hls,mjpeg";
             }
             else
             {

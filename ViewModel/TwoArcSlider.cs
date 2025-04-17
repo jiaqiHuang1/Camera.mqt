@@ -50,7 +50,39 @@ namespace Camera.ViewModel
             }
         }
 
-       
+        private bool _isVideoStreamVisible = false;
+
+        public bool IsVideoStreamVisible
+        {
+            get => _isVideoStreamVisible;
+            set
+            {
+                if (_isVideoStreamVisible != value)
+                {
+                    _isVideoStreamVisible = value;
+                    OnPropertyChanged();
+
+                    // update VideoRowHeight
+                    VideoRowHeight = value ? new GridLength(400) : new GridLength(0);
+                }
+            }
+        }
+
+        private GridLength _videoRowHeight = new GridLength(0);
+        public GridLength VideoRowHeight
+        {
+            get => _videoRowHeight;
+            set
+            {
+                if (_videoRowHeight != value)
+                {
+                    _videoRowHeight = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
 
         // WebView source
         private string _webViewSource;
@@ -68,24 +100,105 @@ namespace Camera.ViewModel
         }
 
 
-        private bool _isStreaming = false;
-        public bool IsStreaming
+        private bool _isManual = false;
+        public bool IsManual
         {
-            get => _isStreaming;
+            get => _isManual;
             set
             {
-                if (_isStreaming != value)
+                if (_isManual != value)
                 {
-                    _isStreaming = value;
+                    _isManual = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(IsStreamingText)); 
+                    OnPropertyChanged(nameof(IsManualText)); 
                 }
             }
         }
 
-        public string IsStreamingText => IsStreaming ? "Stop Stream" : "Start Stream";
+        public string IsManualText => IsManual ? "Manual off" : "Manual on";
 
-        public ICommand ToggleStreamingCommand { get; }
+        public ICommand ToggleManualCommand { get; }
+
+
+        private int _panSpeedValue;
+        public int Pan_SpeedValue
+        {
+            get => _panSpeedValue;
+            set
+            {
+                if (_panSpeedValue != value)
+                {
+                    _panSpeedValue = value;
+                    OnPropertyChanged();
+                    _ = HandlePanSpeedChanged(value);
+                }
+            }
+        }
+
+        private int _tiltSpeedValue;
+        public int Tilt_SpeedValue
+        {
+            get => _tiltSpeedValue;
+            set
+            {
+                if (_tiltSpeedValue != value)
+                {
+                    _tiltSpeedValue = value;
+                    OnPropertyChanged();
+                    _ = HandleTiltSpeedChanged(value);
+                }
+            }
+        }
+
+        private async Task HandlePanSpeedChanged(int newValue)
+        {
+            var factory = new MqttFactory();
+            _pubmqttClient = factory.CreateMqttClient();
+
+            _mqttOptions = new MqttClientOptionsBuilder()
+                .WithClientId("camera_control_app_pub")
+                .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort)
+                .Build();
+
+
+            await _pubmqttClient.ConnectAsync(_mqttOptions);
+
+            var payload = JsonSerializer.Serialize(new { speed_pan = Pan_SpeedValue });
+
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic("cam/set/speed/pan")
+                .WithPayload(payload)
+                .WithExactlyOnceQoS()
+                .WithRetainFlag(false)
+                .Build();
+            await _pubmqttClient.PublishAsync(message);
+        }
+
+
+        private async Task HandleTiltSpeedChanged(int newValue)
+        {
+            var factory = new MqttFactory();
+            _pubmqttClient = factory.CreateMqttClient();
+
+            _mqttOptions = new MqttClientOptionsBuilder()
+                .WithClientId("camera_control_app_pub")
+                .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort)
+                .Build();
+
+
+            await _pubmqttClient.ConnectAsync(_mqttOptions);
+
+            var payload = JsonSerializer.Serialize(new { speed_tilt = Tilt_SpeedValue });
+
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic("cam/set/speed/tilt")
+                .WithPayload(payload)
+                .WithExactlyOnceQoS()
+                .WithRetainFlag(false)
+                .Build();
+            await _pubmqttClient.PublishAsync(message);
+        }
+
 
         // Constructor: Initialize two ViewModel instances
         public TwoArcSlider()
@@ -118,14 +231,14 @@ namespace Camera.ViewModel
             Slider_VerViewModel.RequestRedraw += () => RequestRedraw?.Invoke();
 
 
-            ToggleStreamingCommand = new Command(async () => await ToggleStreamAsync());
+            ToggleManualCommand = new Command(async () => await ToggleManualAsync());
             _ = SubscribeToStatusAsync();
 
         }
 
-        private async Task ToggleStreamAsync()
+        private async Task ToggleManualAsync()
         {
-            IsStreaming = !IsStreaming; // state switching
+            IsManual = !IsManual; // state switching
 
             var factory = new MqttFactory();
             _pubmqttClient = factory.CreateMqttClient();
@@ -138,17 +251,16 @@ namespace Camera.ViewModel
             
                 await _pubmqttClient.ConnectAsync(_mqttOptions);
 
-                var payload = JsonSerializer.Serialize(new { is_streaming = IsStreaming });
+                var payload = JsonSerializer.Serialize(new { mode_manual = IsManual });
 
                 var message = new MqttApplicationMessageBuilder()
-                    .WithTopic("cam/set/stream")
+                    .WithTopic("cam/set/manual")
                     .WithPayload(payload)
                     .WithExactlyOnceQoS()
                     .WithRetainFlag(false)
                     .Build();
 
                 await _pubmqttClient.PublishAsync(message);
-            
         }
 
 
@@ -178,10 +290,10 @@ namespace Camera.ViewModel
 
 
 
-                        if (json.TryGetProperty("is_streaming", out var isStreamingProp))
+                        if (json.TryGetProperty("mode_manual", out var isStreamingProp))
                         {
                             bool value = isStreamingProp.GetBoolean();
-                            MainThread.BeginInvokeOnMainThread(() => IsStreaming = value);
+                            MainThread.BeginInvokeOnMainThread(() => IsManual = value);
                         }
                         if (json.TryGetProperty("tilt", out var tiltProp))
                         {
@@ -194,6 +306,18 @@ namespace Camera.ViewModel
                             int value = panProp.GetInt32();
                             MainThread.BeginInvokeOnMainThread(() => _sliderViewModel.Angle = value);
                             System.Diagnostics.Debug.WriteLine($"[UI] Horizontal Angle set to: {_sliderViewModel.Angle}");
+                        }
+                        if (json.TryGetProperty("speed_pan", out var speed_panProp))
+                        {
+                            int value = speed_panProp.GetInt32();
+                            MainThread.BeginInvokeOnMainThread(() => Pan_SpeedValue = value);
+                            System.Diagnostics.Debug.WriteLine($"[UI] Pan speed set to: {Pan_SpeedValue}");
+                        }
+                        if (json.TryGetProperty("speed_tilt", out var speed_tiltProp))
+                        {
+                            int value = speed_tiltProp.GetInt32();
+                            MainThread.BeginInvokeOnMainThread(() => Tilt_SpeedValue = value);
+                            System.Diagnostics.Debug.WriteLine($"[UI] Tilt speed set to: {Tilt_SpeedValue}");
                         }
                     }
                 }
