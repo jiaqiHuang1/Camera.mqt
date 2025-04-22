@@ -282,30 +282,29 @@ namespace Camera.ViewModel
             System.Diagnostics.Debug.WriteLine($"Radians: {radians:F2} Degree: {degree:F1} RawAngle: {newAngle}");
             System.Diagnostics.Debug.WriteLine($"Draw CenterY: {ArcSliderDrawable._centerY} | TouchY: {touchY}");
 
-            // 新增滑块识别逻辑
+            // Slider recognition
             float handleRadius = ArcSliderDrawable._innerRadius + ArcSliderDrawable._arcWidth;
             float touchThreshold = ArcSliderDrawable._handleRadius * 1.5f;
 
-            // 计算三个滑块位置（使用元组代替PointF）
+
             var mainPos = CalculateHandlePosition(Angle, centerX, centerY, handleRadius);
             var minPos = CalculateHandlePosition(MinAngle, centerX, centerY, handleRadius);
             var maxPos = CalculateHandlePosition(MaxAngle, centerX, centerY, handleRadius);
 
-            //Angle = newAngle;
-            // 优先检测主滑块（保持原有操作习惯）
+            // check main slider first
             if (IsPointInCircle(touchX, touchY, mainPos.X, mainPos.Y, touchThreshold))
             {
                 if (newAngle <= MaxAngle & newAngle >= MinAngle)
                     Angle = newAngle;
             }
 
-            // 其次检测下限滑块
+            // check Min slider
             else if (IsPointInCircle(touchX, touchY, minPos.X, minPos.Y, touchThreshold))
             {
                 if (newAngle <= Angle)
                     MinAngle = newAngle;
             }
-            // 最后检测上限滑块
+            // check Max slider
             else if (IsPointInCircle(touchX, touchY, maxPos.X, maxPos.Y, touchThreshold))
             {
                 if (newAngle >= Angle)
@@ -321,17 +320,14 @@ namespace Camera.ViewModel
             //Angle = NormalizeAngle(newAngle);
         }
 
-        // 新增辅助方法（不使用PointF）
+        // calculate slider position
         private (float X, float Y) CalculateHandlePosition(float angle, float centerX, float centerY, float radius)
         {
-            // 保持与Drawable一致的坐标系：
-            // - 起始点：-90°（正上方）
-            // - 角度增加方向：顺时针
-            // - Y轴：屏幕坐标系（向下为正）
+
             float radian = (float)(Math.PI * (-90 + angle) / 180);
             return (
                 centerX + radius * (float)Math.Cos(radian),
-                centerY + radius * (float)Math.Sin(radian) // 注意：Y轴用减法
+                centerY + radius * (float)Math.Sin(radian) 
             );
         }
 

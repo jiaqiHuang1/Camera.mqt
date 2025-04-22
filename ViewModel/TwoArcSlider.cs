@@ -293,7 +293,7 @@ namespace Camera.ViewModel
             }
             else
             {
-                // 🙅 手动模式：取消订阅 cam/status/pan
+                // unsubcribe cam/status/pan
                 await _pubmqttClient.UnsubscribeAsync("cam/status/pan");
                 Console.WriteLine("Unsubscribed from cam/status/pan");
             }
