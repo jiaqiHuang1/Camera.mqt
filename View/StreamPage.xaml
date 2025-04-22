@@ -11,157 +11,185 @@
     </ContentPage.BindingContext>
 
     <!-- Main Grid Layout -->
-    <Grid Padding="0">
-        <Grid.RowDefinitions>
-            <!-- Video Stream Row -->
-            <RowDefinition Height="{Binding VideoRowHeight}"/>
-            <!-- Video Stream Toggle Row -->
-            <RowDefinition Height="Auto"/>
-            <!-- Arc Sliders Row -->
-            <RowDefinition Height="500"/>
-            <!-- pan/tilt speed slider -->
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <!-- Video Stream Section -->
-        <WebView Grid.Row="0"
-                 HeightRequest="300"
-                 WidthRequest="400"
-                 Source="{Binding WebViewSource}" 
-                 VerticalOptions="Center"
-                 HorizontalOptions="Center"
-                 BackgroundColor="Black"
-                 Margin="20,20"
-                 IsVisible="{Binding IsVideoStreamVisible}"/>
-
-        <!-- Video Stream Toggle -->
-        <HorizontalStackLayout Grid.Row="1" 
-                               HorizontalOptions="Center" 
-                               VerticalOptions="Center" Spacing="10">
-                                <Label Text="Show Video Stream:" VerticalOptions="Center"/>
-                                <Switch IsToggled="{Binding IsVideoStreamVisible}" 
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"/>
-        </HorizontalStackLayout>
-        <!-- Arc Sliders Section -->
-        <Grid Grid.Row="2"
-              RowSpacing="20"
-              Padding="10">
+    <ScrollView>
+        <Grid Padding="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <!-- Video Stream Row -->
+                <RowDefinition Height="{Binding VideoRowHeight}"/>
+                <!-- Video Stream Toggle Row -->
+                <RowDefinition Height="auto"/>
+                <!-- Arc Sliders Row -->
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="0"
-                    Text="{Binding IsManualText}"
-                    Command="{Binding ToggleManualCommand}"
-                    BackgroundColor="LightBlue"
-                    TextColor="Black"
-                    CornerRadius="20"
-                    Margin="10"
-                    HeightRequest="50"
-                    WidthRequest="200"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"/>
-            <!-- First Arc Slider -->
-            <Grid Grid.Row="1">
-                <GraphicsView x:Name="arcSlider"
-                              Drawable="{Binding SliderViewModel.ArcSliderDrawable}"
-                              StartInteraction="ArcSlider_StartInteraction"
-                              DragInteraction="ArcSlider_DragInteraction"
-                              EndInteraction="ArcSlider_EndInteraction"
-                              WidthRequest="300"
-                              HeightRequest="170"
-                              VerticalOptions="Center"
-                              HorizontalOptions="Center"/>
+            <!-- Video Stream Section -->
+            <WebView Grid.Row="0"
+                     HeightRequest="300"
+                     WidthRequest="400"
+                     Source="{Binding WebViewSource}" 
+                     VerticalOptions="Center"
+                     HorizontalOptions="Center"
+                     BackgroundColor="Black"
+                     Margin="20,20"
+                     IsVisible="{Binding IsVideoStreamVisible}"/>
 
-                <!-- Input Box for First Slider -->
-                <Entry x:Name="AngleEntry"
-                       Text="{Binding SliderViewModel.InputText}"
-                       IsVisible="{Binding SliderViewModel.IsEntryVisible}"
-                       Completed="AngleEntry_Completed"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       WidthRequest="100"
-                       HorizontalTextAlignment="Center"
-                       Keyboard="Default"
-                       ReturnType="Done"/>
-            </Grid>
+            <!-- Video Stream Toggle -->
+            <HorizontalStackLayout Grid.Row="1" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center" Spacing="10">
+                <Label Text="Show Video Stream:" VerticalOptions="Center"/>
+                <Switch IsToggled="{Binding IsVideoStreamVisible}" 
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"/>
+            </HorizontalStackLayout>
+        
+        
+            <!-- Arc Sliders Section -->
+            <Grid Grid.Row="2"
+                  RowSpacing="20"
+                  Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Second Arc Slider -->
-            <Grid Grid.Row="2">
-                <GraphicsView x:Name="arcSlider_Ver"
-                              Drawable="{Binding Slider_VerViewModel.ArcSlider_VerDrawable}"
-                              StartInteraction="ArcSlider_Ver_StartInteraction"
-                              DragInteraction="ArcSlider_Ver_DragInteraction"
-                              EndInteraction="ArcSlider_Ver_EndInteraction"
-                              WidthRequest="300"
-                              HeightRequest="170"
-                              VerticalOptions="Center"
-                              HorizontalOptions="Center"/>
+                <VerticalStackLayout Grid.Row="0"
+                                     Spacing="10"
+                                     HorizontalOptions="Center">
 
-                <!-- Input Box for Second Slider -->
-                <Entry x:Name="AngleEntry_Ver"
-                       Text="{Binding Slider_VerViewModel.InputText}"
-                       IsVisible="{Binding Slider_VerViewModel.IsEntryVisible}"
-                       Completed="AngleEntry_Ver_Completed"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       WidthRequest="100"
-                       HorizontalTextAlignment="Center"
-                       Keyboard="Default"
-                       ReturnType="Done"/>
+                    <!-- Manual Mode Toggle Button for pan
+                    <Button Text="{Binding IsManual_panText}"
+                            Command="{Binding ToggleManual_panCommand}"
+                            BackgroundColor="LightBlue"
+                            TextColor="Black"
+                            CornerRadius="20"
+                            Margin="10"
+                            HeightRequest="50"
+                            WidthRequest="200"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"/>-->
+
+                    <HorizontalStackLayout 
+                                           HorizontalOptions="Center" 
+                                           VerticalOptions="Center" Spacing="10">
+                        <Label Text="Automatic Mode:" VerticalOptions="Center"/>
+                        <Switch IsToggled="{Binding IsAutomatic_pan}" 
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <GraphicsView x:Name="arcSlider"
+                                  Drawable="{Binding SliderViewModel.ArcSliderDrawable}"
+                                  StartInteraction="ArcSlider_StartInteraction"
+                                  DragInteraction="ArcSlider_DragInteraction"
+                                  EndInteraction="ArcSlider_EndInteraction"
+                                  WidthRequest="300"
+                                  HeightRequest="170"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="Center"/>
+
+                    <Entry x:Name="AngleEntry"
+                           Text="{Binding SliderViewModel.InputText}"
+                           IsVisible="{Binding SliderViewModel.IsEntryVisible}"
+                           Completed="AngleEntry_Completed"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           WidthRequest="100"
+                           HorizontalTextAlignment="Center"
+                           Keyboard="Default"
+                           ReturnType="Done"/>
+
+                    <HorizontalStackLayout Spacing="20"
+                                            HorizontalOptions="Center">
+                        <Label Text="Pan Speed" 
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+                        <Slider x:Name="panSlider"
+                                Minimum="10"
+                                Maximum="85"
+                                WidthRequest="250"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Value="{Binding Pan_SpeedValue}"/>
+                        <Label Text="{Binding Source={x:Reference panSlider}, Path=Value, StringFormat='{0:F0}'}"
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="Center"
+                               WidthRequest="50"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Row="1"
+                                     Spacing="10"
+                                     HorizontalOptions="Center">
+
+                    <!-- Manual Mode Toggle Button for tilt 
+                    <Button Text="{Binding IsManual_tiltText}"
+                            Command="{Binding ToggleManual_tiltCommand}"
+                            BackgroundColor="LightBlue"
+                            TextColor="Black"
+                            CornerRadius="20"
+                            Margin="10"
+                            HeightRequest="50"
+                            WidthRequest="200"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"/> -->
+                    <HorizontalStackLayout 
+                                          HorizontalOptions="Center" 
+                                          VerticalOptions="Center" Spacing="10">
+                        <Label Text="Automatic Mode:" VerticalOptions="Center"/>
+                        <Switch IsToggled="{Binding IsAutomatic_tilt}" 
+                                          VerticalOptions="Center"
+                                          HorizontalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <GraphicsView x:Name="arcSlider_Ver"
+                                  Drawable="{Binding Slider_VerViewModel.ArcSlider_VerDrawable}"
+                                  StartInteraction="ArcSlider_Ver_StartInteraction"
+                                  DragInteraction="ArcSlider_Ver_DragInteraction"
+                                  EndInteraction="ArcSlider_Ver_EndInteraction"
+                                  WidthRequest="300"
+                                  HeightRequest="170"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="Center"/>
+
+                    <Entry x:Name="AngleEntry_Ver"
+                           Text="{Binding Slider_VerViewModel.InputText}"
+                           IsVisible="{Binding Slider_VerViewModel.IsEntryVisible}"
+                           Completed="AngleEntry_Ver_Completed"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           WidthRequest="100"
+                           HorizontalTextAlignment="Center"
+                           Keyboard="Default"
+                           ReturnType="Done"/>
+
+                    <HorizontalStackLayout Spacing="20"
+                                           HorizontalOptions="Center">
+                        <Label Text="Tilt Speed" 
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+                        <Slider x:Name="tiltSlider"
+                                Minimum="10"
+                                Maximum="85"
+                                WidthRequest="250"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Value="{Binding Tilt_SpeedValue}"/>
+                        <Label Text="{Binding Source={x:Reference tiltSlider}, Path=Value, StringFormat='{0:F0}'}"
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="Center"
+                               WidthRequest="50"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
             </Grid>
         </Grid>
-        <VerticalStackLayout Grid.Row="3" 
-                    Spacing="20"
-                    Padding="0,0,0,0"
-                    HorizontalOptions="Center">
-
-            <!-- pan slider -->
-            <VerticalStackLayout Spacing="0"
-                        HorizontalOptions="Center">
-                <Label Text="Pan Speed" 
-               FontSize="14"
-               HorizontalOptions="Center"
-               HorizontalTextAlignment="Center"/>
-
-                <Slider x:Name="panSlider"
-                Minimum="10"
-                Maximum="85"
-                WidthRequest="250"
-                HorizontalOptions="Center"
-                Value="{Binding Pan_SpeedValue}"/>
-
-                <Label Text="{Binding Source={x:Reference panSlider}, Path=Value, StringFormat='{0:F0}'}"
-               FontSize="14"
-               HorizontalOptions="Center"
-               HorizontalTextAlignment="Center"
-               WidthRequest="50"/>
-            </VerticalStackLayout>
-
-            <!-- tilt slider -->
-            <VerticalStackLayout Spacing="0"
-                        HorizontalOptions="Center">
-                <Label Text="Tilt Speed" 
-               FontSize="14"
-               HorizontalOptions="Center"
-               HorizontalTextAlignment="Center"/>
-
-                <Slider x:Name="tiltSlider"
-                Minimum="10"
-                Maximum="85"
-                WidthRequest="250"
-                HorizontalOptions="Center"
-                Value="{Binding Tilt_SpeedValue}"/>
-
-                <Label Text="{Binding Source={x:Reference tiltSlider}, Path=Value, StringFormat='{0:F0}'}"
-               FontSize="14"
-               HorizontalOptions="Center"
-               HorizontalTextAlignment="Center"
-               WidthRequest="50"/>
-            </VerticalStackLayout>
-        </VerticalStackLayout>
-    </Grid>
+    </ScrollView>
 </ContentPage>

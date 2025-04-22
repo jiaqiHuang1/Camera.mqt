@@ -27,6 +27,7 @@ namespace Camera.View
         private void ArcSlider_EndInteraction(object sender, TouchEventArgs e)
         {
             UpdateAngle(e, _viewModel.SliderViewModel);
+            _viewModel.SliderViewModel.EndHandleSelection();
         }
 
         private void ArcSlider_Ver_DragInteraction(object sender, TouchEventArgs e)
@@ -37,6 +38,7 @@ namespace Camera.View
         private void ArcSlider_Ver_EndInteraction(object sender, TouchEventArgs e)
         {
             UpdateAngle_Ver(e, _viewModel.Slider_VerViewModel);
+            _viewModel.Slider_VerViewModel.EndHandleSelection();
         }
 
         // Update angle
@@ -85,6 +87,12 @@ namespace Camera.View
                     // Show input box
                     _viewModel.SliderViewModel.ShowEntry();
                 }
+                else
+                {
+                    _viewModel.SliderViewModel.StartHandleSelection(touchX, touchY,
+                _viewModel.SliderViewModel.ArcSliderDrawable._centerX,
+                _viewModel.SliderViewModel.ArcSliderDrawable._centerY);
+                }
             }
         }
 
@@ -104,6 +112,12 @@ namespace Camera.View
                 {
                     // Show input box
                     _viewModel.Slider_VerViewModel.ShowEntry();
+                }
+                else
+                {
+                    _viewModel.Slider_VerViewModel.StartHandleSelection(touchX, touchY,
+                _viewModel.Slider_VerViewModel.ArcSlider_VerDrawable._centerX,
+                _viewModel.Slider_VerViewModel.ArcSlider_VerDrawable._centerY);
                 }
             }
         }

@@ -11,6 +11,7 @@ using MQTTnet;
 using System.Text.Json;
 using MQTTnet.Client;
 using System.Diagnostics;
+using static Camera.ViewModel.ArcSliderViewModel;
 
 
 namespace Camera.ViewModel
@@ -71,7 +72,7 @@ namespace Camera.ViewModel
                 {
                     _model.MinAngle_ver = NormalizeAngle(value);
 
-                    // 确保主角度不超出新范围
+                    // Ensure that the main angle is not out of the new range
                     if (Angle < _model.MinAngle_ver)
                         Angle = _model.MinAngle_ver;
 
@@ -92,7 +93,7 @@ namespace Camera.ViewModel
                 {
                     _model.MaxAngle_ver = NormalizeAngle(value);
 
-                    // 确保主角度不超出新范围
+                    // Ensure that the main angle is not out of the new range
                     if (Angle > _model.MaxAngle_ver)
                         Angle = _model.MaxAngle_ver;
 
@@ -256,6 +257,37 @@ namespace Camera.ViewModel
             return isInsideRadius;
         }
 
+        public enum HandleType { None, Main, Min, Max }
+        public HandleType ActiveHandle { get; set; } = HandleType.None; //the signal of selected ball
+
+        //check click which ball and selecte it
+        public void StartHandleSelection(float touchX, float touchY, float centerX, float centerY)
+        {
+            float handleRadius = ArcSlider_VerDrawable._innerRadius + ArcSlider_VerDrawable._arcWidth;
+            float touchThreshold = ArcSlider_VerDrawable._handleRadius * 1.5f;
+
+            var mainPos = CalculateHandlePosition(Angle, centerX, centerY, handleRadius);
+            var minPos = CalculateHandlePosition(MinAngle, centerX, centerY, handleRadius);
+            var maxPos = CalculateHandlePosition(MaxAngle, centerX, centerY, handleRadius);
+
+            ActiveHandle = HandleType.None;
+
+            if (IsPointInCircle(touchX, touchY, mainPos.X, mainPos.Y, touchThreshold))
+                ActiveHandle = HandleType.Main;
+            else if (IsPointInCircle(touchX, touchY, minPos.X, minPos.Y, touchThreshold))
+                ActiveHandle = HandleType.Min;
+            else if (IsPointInCircle(touchX, touchY, maxPos.X, maxPos.Y, touchThreshold))
+                ActiveHandle = HandleType.Max;
+            else
+                ActiveHandle = HandleType.Main;
+
+        }
+
+        public void EndHandleSelection()
+        {
+            ActiveHandle = HandleType.None;
+        }
+
         // Update the angle based on touch input
         public void UpdateAngle(float touchX, float touchY, float centerX, float centerY)
         {
@@ -286,42 +318,22 @@ namespace Camera.ViewModel
             //System.Diagnostics.Debug.WriteLine($"Draw CenterY: {ArcSlider_VerDrawable._centerY} | TouchY: {touchY}");
 
             // Slider recognition
-            float handleRadius = ArcSlider_VerDrawable._innerRadius + ArcSlider_VerDrawable._arcWidth;
-            float touchThreshold = ArcSlider_VerDrawable._handleRadius * 1.5f;
-
-            
-            var mainPos = CalculateHandlePosition(Angle, centerX, centerY, handleRadius);
-            var minPos = CalculateHandlePosition(MinAngle, centerX, centerY, handleRadius);
-            var maxPos = CalculateHandlePosition(MaxAngle, centerX, centerY, handleRadius);
-
-
-            // check main slider first
-            if (IsPointInCircle(touchX, touchY, mainPos.X, mainPos.Y, touchThreshold))
+            switch (ActiveHandle)
             {
-                if (newAngle<=MaxAngle & newAngle >=MinAngle)
-                Angle = newAngle;
+                case HandleType.Main:
+                    if (newAngle <= MaxAngle && newAngle >= MinAngle)
+                        Angle = newAngle;
+                    break;
+                case HandleType.Min:
+                    if (newAngle <= Angle)
+                        MinAngle = newAngle;
+                    break;
+                case HandleType.Max:
+                    if (newAngle >= Angle)
+                        MaxAngle = newAngle;
+                    break;
             }
 
-            // check Min slider
-            else if (IsPointInCircle(touchX, touchY, minPos.X, minPos.Y, touchThreshold))
-              {
-                if(newAngle<=Angle)
-                  MinAngle = newAngle;
-              }
-              // check max slider
-            else if (IsPointInCircle(touchX, touchY, maxPos.X, maxPos.Y, touchThreshold))
-              {
-                if(newAngle>=Angle)
-                  MaxAngle = newAngle;
-              }
-            else
-            {
-                if (newAngle <= MaxAngle & newAngle >= MinAngle)
-                    Angle = newAngle;
-            }
-
-
-            //Angle = NormalizeAngle(newAngle);
         }
 
         // calculate slider position

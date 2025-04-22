@@ -100,25 +100,35 @@ namespace Camera.ViewModel
         }
 
 
-        private bool _isManual = false;
-        public bool IsManual
+        private bool _isAutomatic_pan = false;
+        public bool IsAutomatic_pan
         {
-            get => _isManual;
+            get => _isAutomatic_pan;
             set
             {
-                if (_isManual != value)
+                if (_isAutomatic_pan != value)
                 {
-                    _isManual = value;
+                    _isAutomatic_pan = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(IsManualText)); 
+                    _ = ToggleAutomatic_panAsync();
                 }
             }
         }
 
-        public string IsManualText => IsManual ? "Manual off" : "Manual on";
-
-        public ICommand ToggleManualCommand { get; }
-
+        private bool _isAutomatic_tilt = false;
+        public bool IsAutomatic_tilt
+        {
+            get => _isAutomatic_tilt;
+            set
+            {
+                if (_isAutomatic_tilt != value)
+                {
+                    _isAutomatic_tilt = value;
+                    OnPropertyChanged();
+                    _ = ToggleAutomatic_tiltAsync();
+                }
+            }
+        }
 
         private int _panSpeedValue;
         public int Pan_SpeedValue
@@ -230,15 +240,12 @@ namespace Camera.ViewModel
             SliderViewModel.RequestRedraw += () => RequestRedraw?.Invoke();
             Slider_VerViewModel.RequestRedraw += () => RequestRedraw?.Invoke();
 
-
-            ToggleManualCommand = new Command(async () => await ToggleManualAsync());
             _ = SubscribeToStatusAsync();
 
         }
 
-        private async Task ToggleManualAsync()
+        private async Task ToggleAutomatic_panAsync()
         {
-            IsManual = !IsManual; // state switching
 
             var factory = new MqttFactory();
             _pubmqttClient = factory.CreateMqttClient();
@@ -252,7 +259,7 @@ namespace Camera.ViewModel
                 await _pubmqttClient.ConnectAsync(_mqttOptions);
 
                 var payload = JsonSerializer.Serialize("");
-                string topic = IsManual ? "cam/set/manual" : "cam/set/automatic";
+                string topic = IsAutomatic_pan ? "cam/set/pan/automatic" : "cam/set/pan/manual";
 
                 var message = new MqttApplicationMessageBuilder()
                     .WithTopic(topic)
@@ -263,48 +270,38 @@ namespace Camera.ViewModel
 
                 await _pubmqttClient.PublishAsync(message);
 
-            if (!IsManual)
-            {
-                _submqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(e =>
-                {
-                    try
-                    {
-                        var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                        if (e.ApplicationMessage.Topic == "cam/set/current_pan")
-                        {
-                            var json = JsonSerializer.Deserialize<JsonElement>(payload);
-                            if (json.TryGetProperty("angle", out JsonElement angleElement))
-                            {
-                                int angle = angleElement.GetInt32();
-                                System.Diagnostics.Debug.WriteLine($"Received pan angle: {angle}");
+        }
 
-                                // TODO: Update UI-bound property if needed
-                                // PanAngle = angle;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Error parsing MQTT message: {ex.Message}");
-                    }
-                });
+        private async Task ToggleAutomatic_tiltAsync()
+        {
 
-                await _submqttClient.SubscribeAsync("cam/set/current_pan");
-            }
-            else
-            {
-                // unsubcribe cam/status/pan
-                await _pubmqttClient.UnsubscribeAsync("cam/status/pan");
-                Console.WriteLine("Unsubscribed from cam/status/pan");
-            }
+            var factory = new MqttFactory();
+            _pubmqttClient = factory.CreateMqttClient();
 
+            _mqttOptions = new MqttClientOptionsBuilder()
+                .WithClientId("camera_control_app_pub")
+                .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort)
+                .Build();
+
+
+            await _pubmqttClient.ConnectAsync(_mqttOptions);
+
+            var payload = JsonSerializer.Serialize("");
+            string topic = IsAutomatic_tilt ? "cam/set/tilt/automatic" : "cam/set/tilt/manual";
+
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload(payload)
+                .WithExactlyOnceQoS()
+                .WithRetainFlag(false)
+                .Build();
+
+            await _pubmqttClient.PublishAsync(message);
+            
 
         }
-    
 
-
-
-        public async Task SubscribeToStatusAsync()
+            public async Task SubscribeToStatusAsync()
         {
             System.Diagnostics.Debug.WriteLine("SubscribeToStatusAsync() called");
             var factory = new MqttFactory();
@@ -332,7 +329,7 @@ namespace Camera.ViewModel
                         if (json.TryGetProperty("mode_manual", out var isStreamingProp))
                         {
                             bool value = isStreamingProp.GetBoolean();
-                            MainThread.BeginInvokeOnMainThread(() => IsManual = value);
+                            MainThread.BeginInvokeOnMainThread(() => IsAutomatic_pan = value);
                         }
                         if (json.TryGetProperty("tilt", out var tiltProp))
                         {
