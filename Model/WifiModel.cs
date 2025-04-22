@@ -8,7 +8,7 @@ namespace Camera.Model
 
         public bool IsnotConnected { get; set; } = true;
         public string ServerIP { get; set; } = "192.168.31.151";
-        public int ServerPort { get; set; } = 1883;
+        public int ServerPort { get; set; } = 1337;
 
     }
 }

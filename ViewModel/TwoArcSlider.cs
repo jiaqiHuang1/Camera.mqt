@@ -163,7 +163,7 @@ namespace Camera.ViewModel
 
             await _pubmqttClient.ConnectAsync(_mqttOptions);
 
-            var payload = JsonSerializer.Serialize(new { speed_pan = Pan_SpeedValue });
+            var payload = Pan_SpeedValue.ToString();
 
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic("cam/set/speed/pan")
@@ -188,7 +188,7 @@ namespace Camera.ViewModel
 
             await _pubmqttClient.ConnectAsync(_mqttOptions);
 
-            var payload = JsonSerializer.Serialize(new { speed_tilt = Tilt_SpeedValue });
+            var payload = Tilt_SpeedValue.ToString();
 
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic("cam/set/speed/tilt")
@@ -251,17 +251,56 @@ namespace Camera.ViewModel
             
                 await _pubmqttClient.ConnectAsync(_mqttOptions);
 
-                var payload = JsonSerializer.Serialize(new { mode_manual = IsManual });
+                var payload = JsonSerializer.Serialize("");
+                string topic = IsManual ? "cam/set/manual" : "cam/set/automatic";
 
                 var message = new MqttApplicationMessageBuilder()
-                    .WithTopic("cam/set/manual")
+                    .WithTopic(topic)
                     .WithPayload(payload)
                     .WithExactlyOnceQoS()
                     .WithRetainFlag(false)
                     .Build();
 
                 await _pubmqttClient.PublishAsync(message);
+
+            if (!IsManual)
+            {
+                _submqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(e =>
+                {
+                    try
+                    {
+                        var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                        if (e.ApplicationMessage.Topic == "cam/set/current_pan")
+                        {
+                            var json = JsonSerializer.Deserialize<JsonElement>(payload);
+                            if (json.TryGetProperty("angle", out JsonElement angleElement))
+                            {
+                                int angle = angleElement.GetInt32();
+                                System.Diagnostics.Debug.WriteLine($"Received pan angle: {angle}");
+
+                                // TODO: Update UI-bound property if needed
+                                // PanAngle = angle;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error parsing MQTT message: {ex.Message}");
+                    }
+                });
+
+                await _submqttClient.SubscribeAsync("cam/set/current_pan");
+            }
+            else
+            {
+                // 🙅 手动模式：取消订阅 cam/status/pan
+                await _pubmqttClient.UnsubscribeAsync("cam/status/pan");
+                Console.WriteLine("Unsubscribed from cam/status/pan");
+            }
+
+
         }
+    
 
 
 

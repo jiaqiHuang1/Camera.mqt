@@ -11,7 +11,7 @@ namespace Camera.Drawables
         public float _innerRadius;
         public float _centerX;
         public float _centerY;
-        private float _handleRadius;
+        public float _handleRadius;
         public float _arcWidth = 20; // Fixed arc width
 
         public ArcSlider_VerDrawable(ArcSlider_VerViewModel viewModel)
@@ -37,10 +37,10 @@ namespace Camera.Drawables
             _handleRadius = _arcWidth / 2;
 
             //3. Draw auxiliary lines (cross) to mark the center point
-            //canvas.StrokeColor = Colors.White;
-            //canvas.StrokeSize = 2;
-            //canvas.DrawLine(_centerX, 0, _centerX, viewHeight); // Vertical line
-            //canvas.DrawLine(0, _centerY, viewWidth, _centerY); // Horizontal line
+            canvas.StrokeColor = Colors.White;
+            canvas.StrokeSize = 2;
+            canvas.DrawLine(_centerX, 0, _centerX, viewHeight); // Vertical line
+            canvas.DrawLine(0, _centerY, viewWidth, _centerY); // Horizontal line
 
             //4. Draw the center point marker
             //canvas.FillColor = Colors.Yellow;
@@ -67,6 +67,19 @@ namespace Camera.Drawables
             canvas.FillColor = Color.FromRgba(0, 204, 238, 1f);
             canvas.FillCircle(handleX, handleY, _handleRadius);
 
+            //Drawing of the Min ball (red)
+            float minRadian = (float)(Math.PI * (-90 + _viewModel.MinAngle) / 180);
+            float minX = _centerX + handleRadius * (float)Math.Cos(minRadian);
+            float minY = _centerY - handleRadius * (float)Math.Sin(minRadian);
+            canvas.FillColor = Colors.Red;
+            canvas.FillCircle(minX, minY, _handleRadius);
+
+            //Drawing of the Max ball (red)
+            float maxRadian = (float)(Math.PI * (-90 + _viewModel.MaxAngle) / 180);
+            float maxX = _centerX + handleRadius * (float)Math.Cos(maxRadian);
+            float maxY = _centerY - handleRadius * (float)Math.Sin(maxRadian);
+            canvas.FillColor = Colors.Red;
+            canvas.FillCircle(maxX, maxY, _handleRadius);
             // 10. Calculate the middle point of the arc
             //float midRadian = (float)(Math.PI * 0 / 180);
             //float midX = _centerX + handleRadius * (float)Math.Cos(midRadian);

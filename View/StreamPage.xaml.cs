@@ -60,6 +60,7 @@ namespace Camera.View
                 var touchX = (float)e.Touches[0].X;
                 var touchY = (float)e.Touches[0].Y;
 
+
                 slider_VerViewModel.UpdateAngle(touchX, touchY,
                                             slider_VerViewModel.ArcSlider_VerDrawable._centerX,
                                             slider_VerViewModel.ArcSlider_VerDrawable._centerY);
