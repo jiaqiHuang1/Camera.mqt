@@ -57,18 +57,7 @@
                                      Spacing="10"
                                      HorizontalOptions="Center">
 
-                    <!-- Manual Mode Toggle Button for pan
-                    <Button Text="{Binding IsManual_panText}"
-                            Command="{Binding ToggleManual_panCommand}"
-                            BackgroundColor="LightBlue"
-                            TextColor="Black"
-                            CornerRadius="20"
-                            Margin="10"
-                            HeightRequest="50"
-                            WidthRequest="200"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center"/>-->
-
+                    <!-- Mode swich for pan -->
                     <HorizontalStackLayout 
                                            HorizontalOptions="Center" 
                                            VerticalOptions="Center" Spacing="10">
@@ -78,6 +67,7 @@
                                            HorizontalOptions="Center"/>
                     </HorizontalStackLayout>
 
+                    <!-- Slider for pan -->
                     <GraphicsView x:Name="arcSlider"
                                   Drawable="{Binding SliderViewModel.ArcSliderDrawable}"
                                   StartInteraction="ArcSlider_StartInteraction"
@@ -99,6 +89,7 @@
                            Keyboard="Default"
                            ReturnType="Done"/>
 
+                    <!-- speed for pan -->
                     <HorizontalStackLayout Spacing="20"
                                             HorizontalOptions="Center">
                         <Label Text="Pan Speed" 
@@ -126,17 +117,7 @@
                                      Spacing="10"
                                      HorizontalOptions="Center">
 
-                    <!-- Manual Mode Toggle Button for tilt 
-                    <Button Text="{Binding IsManual_tiltText}"
-                            Command="{Binding ToggleManual_tiltCommand}"
-                            BackgroundColor="LightBlue"
-                            TextColor="Black"
-                            CornerRadius="20"
-                            Margin="10"
-                            HeightRequest="50"
-                            WidthRequest="200"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center"/> -->
+                    <!-- Mode swich for tilt -->
                     <HorizontalStackLayout 
                                           HorizontalOptions="Center" 
                                           VerticalOptions="Center" Spacing="10">
@@ -146,6 +127,7 @@
                                           HorizontalOptions="Center"/>
                     </HorizontalStackLayout>
 
+                    <!-- Slider for tilt -->
                     <GraphicsView x:Name="arcSlider_Ver"
                                   Drawable="{Binding Slider_VerViewModel.ArcSlider_VerDrawable}"
                                   StartInteraction="ArcSlider_Ver_StartInteraction"
@@ -167,6 +149,7 @@
                            Keyboard="Default"
                            ReturnType="Done"/>
 
+                    <!-- speed for tilt -->
                     <HorizontalStackLayout Spacing="20"
                                            HorizontalOptions="Center">
                         <Label Text="Tilt Speed" 
