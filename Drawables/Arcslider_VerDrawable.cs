@@ -22,17 +22,17 @@ namespace Camera.Drawables
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
             // 1. Draw the white background for better visibility
-            canvas.FillColor = Colors.White;
+            canvas.FillColor = Colors.Grey;
             canvas.FillRectangle(dirtyRect);
 
             // 2. Calculate the center point of GraphicsView
             float viewWidth = dirtyRect.Width;
             float viewHeight = dirtyRect.Height;
 
-            _centerX = viewWidth / 2 -60;
-            _centerY = viewHeight / 2 - 70;
+            _centerX = viewWidth / 2 -70;
+            _centerY = viewHeight / 2;
 
-            _outerRadius = viewWidth / 2 - 20;
+            _outerRadius = viewHeight / 2 - 20;
             _innerRadius = _outerRadius - _arcWidth;
             _handleRadius = _arcWidth / 2;
 
@@ -53,31 +53,31 @@ namespace Camera.Drawables
             // 6. Draw the arc (open at the bottom)
             canvas.StrokeColor = Colors.LightBlue;
             canvas.StrokeSize = _arcWidth;
-            canvas.DrawArc(arcLeft, arcTop, _outerRadius * 2, _outerRadius * 2, -90, 0, false, false);
+            canvas.DrawArc(arcLeft, arcTop, _outerRadius * 2, _outerRadius * 2, -90, 90, false, false);
 
             // 7. Fix: Calculate the radius of the slider's path according to the arc width
             float handleRadius = _innerRadius + _arcWidth;
 
             // 8. Calculate the position of the slider (along the middle path)
-            float radian = (float)(Math.PI * (- 90 + _viewModel.Angle) / 180);
+            float radian = (float)(Math.PI * (_viewModel.Angle) / 180);
             float handleX = _centerX + handleRadius * (float)Math.Cos(radian);
-            float handleY = _centerY - handleRadius * (float)Math.Sin(radian);
+            float handleY = _centerY + handleRadius * (float)Math.Sin(radian);
 
             // 9. Draw the small round slider nested inside the arc
             canvas.FillColor = Color.FromRgba(0, 204, 238, 1f);
             canvas.FillCircle(handleX, handleY, _handleRadius);
 
             //Drawing of the Min ball (red)
-            float minRadian = (float)(Math.PI * (-90 + _viewModel.MinAngle) / 180);
+            float minRadian = (float)(Math.PI * (_viewModel.MinAngle) / 180);
             float minX = _centerX + handleRadius * (float)Math.Cos(minRadian);
-            float minY = _centerY - handleRadius * (float)Math.Sin(minRadian);
+            float minY = _centerY + handleRadius * (float)Math.Sin(minRadian);
             canvas.FillColor = Colors.Red;
             canvas.FillCircle(minX, minY, _handleRadius);
 
             //Drawing of the Max ball (red)
-            float maxRadian = (float)(Math.PI * (-90 + _viewModel.MaxAngle) / 180);
+            float maxRadian = (float)(Math.PI * (_viewModel.MaxAngle) / 180);
             float maxX = _centerX + handleRadius * (float)Math.Cos(maxRadian);
-            float maxY = _centerY - handleRadius * (float)Math.Sin(maxRadian);
+            float maxY = _centerY + handleRadius * (float)Math.Sin(maxRadian);
             canvas.FillColor = Colors.Red;
             canvas.FillCircle(maxX, maxY, _handleRadius);
             // 10. Calculate the middle point of the arc

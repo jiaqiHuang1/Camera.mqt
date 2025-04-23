@@ -240,7 +240,7 @@ namespace Camera.ViewModel
         private int NormalizeAngle(int value)
         {
             if (value > 90) return 90;
-            if (value < 0) return 0;
+            if (value < -90) return -90;
             return value;
         }
 
@@ -291,18 +291,13 @@ namespace Camera.ViewModel
         // Update the angle based on touch input
         public void UpdateAngle(float touchX, float touchY, float centerX, float centerY)
         {
-            /*if (!IsInsideArc(touchX, touchY))
-                return;*/
-
-            float compensatedY = touchY - 30;
-
-            float deltaX = centerX - touchX;
-            float deltaY = centerY + compensatedY;
+            float deltaX = touchX - centerX;
+            float deltaY = touchY - centerY;
 
             float radians = (float)Math.Atan2(deltaY, deltaX);
-            float degree = radians * 180 / (float)Math.PI;
+            float degree = radians * 180f / (float)Math.PI;
 
-            int newAngle = (int)degree - 90;
+            int newAngle = (int)degree;
             int deltaAngle = newAngle - Angle;
 
             if (Math.Abs(deltaAngle) > 180)
@@ -339,7 +334,7 @@ namespace Camera.ViewModel
         // calculate slider position
         private (float X, float Y) CalculateHandlePosition(float angle, float centerX, float centerY, float radius)
         {
-            float radian = (float)(Math.PI * (-90 + angle) / 180);
+            float radian = (float)(Math.PI * (-angle) / 180);
             return (
                 centerX + radius * (float)Math.Cos(radian),
                 centerY - radius * (float)Math.Sin(radian) 

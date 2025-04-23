@@ -156,8 +156,8 @@
                                   StartInteraction="ArcSlider_Ver_StartInteraction"
                                   DragInteraction="ArcSlider_Ver_DragInteraction"
                                   EndInteraction="ArcSlider_Ver_EndInteraction"
-                                  WidthRequest="300"
-                                  HeightRequest="170"
+                                  WidthRequest="170"
+                                  HeightRequest="300"
                                   VerticalOptions="Center"
                                   HorizontalOptions="Center"/>
 
