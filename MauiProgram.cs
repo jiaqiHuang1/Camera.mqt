@@ -2,7 +2,7 @@
 using CommunityToolkit.Maui;
 using Camera.ViewModel;
 using Camera.View;
-
+using Syncfusion.Maui.Core.Hosting;
 namespace Camera
 {
     public static class MauiProgram
@@ -13,6 +13,7 @@ namespace Camera
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .ConfigureSyncfusionCore()
                 .UseMauiCommunityToolkitMediaElement()
                // .UseMauiMaps()
                 .ConfigureFonts(fonts =>
