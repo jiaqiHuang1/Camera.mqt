@@ -82,7 +82,24 @@ namespace Camera.ViewModel
             }
         }
 
+        private int _selectedSegmentIndex;
+        public int SelectedSegmentIndex
+        {
+            get => _selectedSegmentIndex;
+            set
+            {
+                if (_selectedSegmentIndex != value)
+                {
+                    _selectedSegmentIndex = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsPanSelected));
+                    OnPropertyChanged(nameof(IsTiltSelected));
+                }
+            }
+        }
 
+        public bool IsPanSelected => SelectedSegmentIndex == 0;
+        public bool IsTiltSelected => SelectedSegmentIndex == 1;
 
         // WebView source
         private string _webViewSource;

@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:Camera.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="Camera.View.StreamPage"
              BackgroundColor="White">
 
@@ -32,7 +33,7 @@
                      BackgroundColor="Black"
                      Margin="20,20"
                      IsVisible="{Binding IsVideoStreamVisible}"/>
-
+            
             <!-- Video Stream Toggle -->
             <HorizontalStackLayout Grid.Row="1" 
                                    HorizontalOptions="Center" 
@@ -51,12 +52,33 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <VerticalStackLayout Grid.Row="0"
-                                     Spacing="10"
-                                     HorizontalOptions="Center">
+                <buttons:SfSegmentedControl x:Name="segmentedControl"
+                                            SelectedIndex="{Binding SelectedSegmentIndex, Mode=TwoWay}"
+                                            CornerRadius="10"
+                                            Stroke="Gray"
+                                            StrokeThickness="1">
+                    <buttons:SfSegmentedControl.SelectionIndicatorSettings>
+                        <buttons:SelectionIndicatorSettings
+                                SelectionIndicatorPlacement="Fill"
+                                Background="DodgerBlue"
+                                TextColor="White" />
+                    </buttons:SfSegmentedControl.SelectionIndicatorSettings>
+                    <buttons:SfSegmentedControl.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Pan Servo</x:String>
+                            <x:String>Tilt Servo</x:String>
+                        </x:Array>
+                    </buttons:SfSegmentedControl.ItemsSource>
+                </buttons:SfSegmentedControl>
 
+                <VerticalStackLayout Grid.Row="1"
+                                     Spacing="10"
+                                     HorizontalOptions="Center"
+                                     IsVisible="{Binding IsPanSelected}">
+                                       
                     <!-- Mode swich for pan -->
                     <HorizontalStackLayout 
                                            HorizontalOptions="Center" 
@@ -113,9 +135,10 @@
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
-                <VerticalStackLayout Grid.Row="1"
+                <VerticalStackLayout Grid.Row="2"
                                      Spacing="10"
-                                     HorizontalOptions="Center">
+                                     HorizontalOptions="Center"
+                                     IsVisible="{Binding IsTiltSelected}">
 
                     <!-- Mode swich for tilt -->
                     <HorizontalStackLayout 
