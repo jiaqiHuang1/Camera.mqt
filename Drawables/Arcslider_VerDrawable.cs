@@ -22,7 +22,7 @@ namespace Camera.Drawables
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
             // 1. Draw the white background for better visibility
-            canvas.FillColor = Colors.Grey;
+            canvas.FillColor = Colors.White;
             canvas.FillRectangle(dirtyRect);
 
             // 2. Calculate the center point of GraphicsView
@@ -88,7 +88,7 @@ namespace Camera.Drawables
             // 11. Draw a square box to display the angle
             float boxSize = 50;
             float boxLeft = _centerX - boxSize / 2+25;
-            float boxTop = _centerY;
+            float boxTop = _centerY - 25;
 
             // Draw the box background
             canvas.FillColor = Colors.White;

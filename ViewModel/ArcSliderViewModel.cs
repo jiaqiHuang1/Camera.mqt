@@ -363,6 +363,10 @@ namespace Camera.ViewModel
             if (int.TryParse(InputText, out int newAngle))
             {
                 Angle = NormalizeAngle(newAngle);
+                if (Angle > MaxAngle)
+                    Angle = MaxAngle;
+                else if (Angle < MinAngle)
+                    Angle = MinAngle;
                 RequestRedraw?.Invoke();
             }
 

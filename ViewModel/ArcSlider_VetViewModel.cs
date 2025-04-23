@@ -361,6 +361,10 @@ namespace Camera.ViewModel
             if (int.TryParse(InputText, out int newAngle))
             {
                 Angle = NormalizeAngle(newAngle);
+                if (Angle > MaxAngle)
+                    Angle = MaxAngle;
+                else if (Angle < MinAngle)
+                    Angle = MinAngle;
                 RequestRedraw?.Invoke();
             }
 
@@ -371,8 +375,8 @@ namespace Camera.ViewModel
         public bool HandleTouch(float touchX, float touchY)
         {
             float boxSize = 50;
-            float boxLeft = ArcSlider_VerDrawable._centerX - boxSize / 2+50;
-            float boxTop = ArcSlider_VerDrawable._centerY;
+            float boxLeft = ArcSlider_VerDrawable._centerX - boxSize / 2+25;
+            float boxTop = ArcSlider_VerDrawable._centerY - 25;
 
             return touchX >= boxLeft && touchX <= boxLeft + boxSize &&
                    touchY >= boxTop && touchY <= boxTop + boxSize;
