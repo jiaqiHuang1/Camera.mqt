@@ -5,6 +5,8 @@
     <title>Camera Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+
     <style>
         html, body, #map {
             height: 100%;
@@ -34,6 +36,8 @@
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+ 
+
     <script>
         // Initialize the map
         var map = L.map('map').setView([49.4401, 7.7491], 14);
@@ -47,14 +51,14 @@
         // Function to add a camera marker (called dynamically by .NET)
         window.addCameraMarker = function (id, city, street, ip, port, lat, lng) {
             var popupContent = `
-                      <b>${city} - ${street}</b><br/>
-                      IP: ${ip}:${port}<br/>
-                      <div style="display: flex; flex-wrap: nowrap; gap: 4px; justify-content: flex-start; margin-top: 8px;">
-                        <div class="button" onclick="onStream('${id}')">Stream</div>
-                        <div class="button" onclick="onLive('${id}')">Live</div>
-                        <div class="button" onclick="onAnalyse('${id}')">Analyse</div>
-                      </div>
-                    `;
+                                      <b>${city} - ${street}</b><br/>
+                                      IP: ${ip}:${port}<br/>
+                                      <div style="display: flex; flex-wrap: nowrap; gap: 4px; justify-content: flex-start; margin-top: 8px;">
+                                        <div class="button" onclick="onStream('${id}')">Stream</div>
+                                        <div class="button" onclick="onLive('${id}')">Live</div>
+                                        <div class="button" onclick="onAnalyse('${id}')">Analyse</div>
+                                      </div>
+                                    `;
 
             var marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
             cameraMarkers.push({ id: id, marker: marker });

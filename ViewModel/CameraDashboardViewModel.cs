@@ -68,6 +68,7 @@ namespace Camera.ViewModel
 
             _webView.Navigating += async (s, e) =>
             {
+                System.Diagnostics.Debug.WriteLine("✅ WebView loaded: " + e.Url);
                 // Intercept custom scheme calls like: cameracommand://stream?id=1
                 if (e.Url.StartsWith("cameracommand://"))
                 {
@@ -88,11 +89,11 @@ namespace Camera.ViewModel
                     {
                         SelectedCamera = cam;
                         UpdateWebViewSource(cam.IpAddress, cam.Port);
-                        await Shell.Current.GoToAsync("//StreamPage");
+                        await Shell.Current.GoToAsync("StreamPage");
                     }
                     else if (cmd == "live")
                     {
-                        await Shell.Current.GoToAsync("//LivePage");
+                        await Shell.Current.GoToAsync("LivePage");
                     }
                     if (cmd == "analyse")
                     {
@@ -108,8 +109,7 @@ namespace Camera.ViewModel
             var stream = await FileSystem.OpenAppPackageFileAsync("map.html");
             using var reader = new StreamReader(stream);
             var html = await reader.ReadToEndAsync();
-            _webView.Source = new HtmlWebViewSource { Html = html };
-
+            _webView.Source = new HtmlWebViewSource {Html = html};
             await Task.Delay(300); // Wait for WebView to be fully ready
             UpdateFilteredAndMap();
         }

@@ -7,18 +7,23 @@
     Shell.FlyoutBehavior="Flyout"
     Title="Camera">
 
+
+    
+
     <FlyoutItem Title="CameraDashboard">
         <ShellContent 
             ContentTemplate="{DataTemplate view:CameraDashboard}" 
             Route="CameraDashboard" 
             Title="Camera Dashboard"/>
     </FlyoutItem>
-    
+
     <FlyoutItem Title="MENU" Route="Menu">
         <ShellContent 
-            ContentTemplate="{DataTemplate view:Menu}" 
-            Title="MENU"/>
+ ContentTemplate="{DataTemplate view:Menu}" 
+ Title="MENU"/>
     </FlyoutItem>
+
+
 
     <FlyoutItem Title="Stream">
         <ShellContent 

@@ -10,6 +10,7 @@ using MQTTnet.Client.Options;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Receiving;
+using System.Text.Json.Serialization;
 
 
 
@@ -158,7 +159,7 @@ namespace Camera.ViewModel
                 // Set broker IP and port from model, and assign a unique client ID
                 _mqttOptions = new MqttClientOptionsBuilder()
                     .WithClientId("mobile-app")
-                    .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort)
+                    .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort_wifi)
                     .Build();
 
                 // Start connection to MQTT broker
@@ -182,13 +183,20 @@ namespace Camera.ViewModel
             try
             {
                 // Build the JSON payload
-                var wifiConfig = new
+                /*var wifiConfig = new
                 {
                     ssid = SSID,
                     password = Password
                 };
 
-                string payload = JsonSerializer.Serialize(wifiConfig);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.Never
+                };
+
+                string payload = JsonSerializer.Serialize(wifiConfig, options);*/
+                string payload = $"{{\"ssid\":\"{SSID}\",\"password\":\"{Password}\"}}";
 
                 // Publish to topic "wifi/config"
                 var message = new MqttApplicationMessageBuilder()

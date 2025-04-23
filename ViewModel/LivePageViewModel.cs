@@ -13,7 +13,7 @@ namespace Camera.ViewModel
         private readonly IDispatcherTimer _autoUpdateTimer;
         private readonly DatebaseService _databaseService;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        
         public ObservableCollection<VehiclesInfo> Vehicles { get; set; }
         public string StatusMessage { get; set; }
         public IDrawable VehicleCanvas { get; private set; }
@@ -107,11 +107,17 @@ namespace Camera.ViewModel
 
                 if (graphicsView != null)
                 {
+                   // System.Diagnostics.Debug.WriteLine("find GraphicsView");
                     graphicsView.Invalidate(); // Triggers a redraw because `GraphicsView` needs to update its content
+                }
+                else
+                {
+                   // System.Diagnostics.Debug.WriteLine("not find GraphicsView");
                 }
             });
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

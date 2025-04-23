@@ -96,7 +96,7 @@ namespace Camera.ViewModel
         private async void OnCameraClicked()
         {
            
-            await Shell.Current.GoToAsync("Cameralist");
+            await Shell.Current.GoToAsync("CameraDashboard");
            
         }
 

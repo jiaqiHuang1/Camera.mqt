@@ -23,10 +23,15 @@ namespace Camera.Drawables
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
+
+            if (_vehicles.Count == 0)
+                return; // 没数据时不画
             // Draw a black border around the GraphicsView
             canvas.StrokeColor = Colors.Black;  // Set border color
             canvas.StrokeSize = 4;              // Set border thickness
             canvas.DrawRectangle(dirtyRect);    // Draw the border
+
+            
 
             foreach (var vehicle in _vehicles)
             {
@@ -36,6 +41,7 @@ namespace Camera.Drawables
                     1 => _carImage,      // Car 
                     2 => _bicycleImage,  // Bicycle
                 };
+
 
                 if (imageToDraw != null)
                 {
@@ -47,10 +53,14 @@ namespace Camera.Drawables
                     float x = (float)vehicle.X - imageWidth / 2;
                     float y = (float)vehicle.Y - imageHeight / 2;
 
+
+
                     // Draw the scaled image
                     canvas.DrawImage(imageToDraw, x, y, imageWidth, imageHeight);
                 }
             }
+
+
         }
 
         private IImage LoadImage(string fileName)
@@ -69,6 +79,8 @@ namespace Camera.Drawables
             {
                 return null;
             }
+
+            
         }
     }
 }
