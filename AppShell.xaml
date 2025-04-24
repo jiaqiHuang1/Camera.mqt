@@ -17,13 +17,12 @@
             Title="Camera Dashboard"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="MENU" Route="Menu">
+    <FlyoutItem Title="MENU" Route="Menu" >
         <ShellContent 
- ContentTemplate="{DataTemplate view:Menu}" 
- Title="MENU"/>
+                 ContentTemplate="{DataTemplate view:Menu}" 
+                 
+                 Title="MENU"/>
     </FlyoutItem>
-
-
 
     <FlyoutItem Title="Stream">
         <ShellContent 
@@ -31,6 +30,8 @@
             Route="StreamPage" 
             Title="Stream"/>
     </FlyoutItem>
+
+
 
     <ShellItem>
         <ShellContent 

@@ -61,7 +61,7 @@ namespace Camera.Drawables
             // 8. Calculate the position of the slider (along the middle path)
             float radian = (float)(Math.PI * (_viewModel.Angle) / 180);
             float handleX = _centerX + handleRadius * (float)Math.Cos(radian);
-            float handleY = _centerY + handleRadius * (float)Math.Sin(radian);
+            float handleY = _centerY - handleRadius * (float)Math.Sin(radian);
 
             // 9. Draw the small round slider nested inside the arc
             canvas.FillColor = Color.FromRgba(0, 204, 238, 1f);
@@ -70,14 +70,14 @@ namespace Camera.Drawables
             //Drawing of the Min ball (red)
             float minRadian = (float)(Math.PI * (_viewModel.MinAngle) / 180);
             float minX = _centerX + handleRadius * (float)Math.Cos(minRadian);
-            float minY = _centerY + handleRadius * (float)Math.Sin(minRadian);
+            float minY = _centerY - handleRadius * (float)Math.Sin(minRadian);
             canvas.FillColor = Colors.Red;
             canvas.FillCircle(minX, minY, _handleRadius);
 
             //Drawing of the Max ball (red)
             float maxRadian = (float)(Math.PI * (_viewModel.MaxAngle) / 180);
             float maxX = _centerX + handleRadius * (float)Math.Cos(maxRadian);
-            float maxY = _centerY + handleRadius * (float)Math.Sin(maxRadian);
+            float maxY = _centerY - handleRadius * (float)Math.Sin(maxRadian);
             canvas.FillColor = Colors.Red;
             canvas.FillCircle(maxX, maxY, _handleRadius);
             // 10. Calculate the middle point of the arc

@@ -121,7 +121,7 @@ namespace Camera.ViewModel
                     .WithClientId("camera_control_app")
                     .WithTcpServer(_wifiModel.ServerIP, _wifiModel.ServerPort)
                     .Build();
-
+               
                 await _mqttClient.ConnectAsync(_mqttOptions);
             }
 
@@ -157,7 +157,7 @@ namespace Camera.ViewModel
                 await _mqttClient.ConnectAsync(_mqttOptions);
             }
 
-            var payload = $"{MinAngle},{MaxAngle}";
+            var payload = $"{{\"min\":{MinAngle},\"max\":{MaxAngle}}}";
 
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic("cam/set/tilt_range") // 
@@ -292,7 +292,7 @@ namespace Camera.ViewModel
         public void UpdateAngle(float touchX, float touchY, float centerX, float centerY)
         {
             float deltaX = touchX - centerX;
-            float deltaY = touchY - centerY;
+            float deltaY = -(touchY - centerY);
 
             float radians = (float)Math.Atan2(deltaY, deltaX);
             float degree = radians * 180f / (float)Math.PI;
@@ -337,7 +337,7 @@ namespace Camera.ViewModel
             float radian = (float)(Math.PI * (-angle) / 180);
             return (
                 centerX + radius * (float)Math.Cos(radian),
-                centerY - radius * (float)Math.Sin(radian) 
+                centerY + radius * (float)Math.Sin(radian) 
             );
         }
 
