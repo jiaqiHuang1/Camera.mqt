@@ -300,8 +300,8 @@ namespace Camera.ViewModel
         public TwoArcSlider()
         {
             _wifiModel = new WifiModel();
-            SliderViewModel = new ArcSliderViewModel();
-            Slider_VerViewModel = new ArcSlider_VerViewModel();
+            SliderViewModel = new ArcSliderViewModel(this);
+            Slider_VerViewModel = new ArcSlider_VerViewModel(this);
 
             // **Get from Service Locator CamerasViewModel**
             _cameraDashboardViewModel = MauiProgram.Services.GetService<CameraDashboardViewModel>();
@@ -462,9 +462,14 @@ namespace Camera.ViewModel
                         {
                             if (panProp.TryGetProperty("angle", out var panAngleProp))
                             {
-                                int panAngle = panAngleProp.GetInt32();   
-                                MainThread.BeginInvokeOnMainThread(() => _sliderViewModel.Angle = panAngle);
-                                
+                                int panAngle = panAngleProp.GetInt32();
+                                if (_allowRemoteAutoStateUpdate == true || IsAutomatic_pan == true)
+                                {
+                                    MainThread.BeginInvokeOnMainThread(() =>
+                                    {
+                                        _sliderViewModel.Angle = panAngle;
+                                    });
+                                }
                             }
 
                             if (panProp.TryGetProperty("speed", out var panSpeedProp))
@@ -499,13 +504,25 @@ namespace Camera.ViewModel
                             if (tiltProp.TryGetProperty("angle", out var tiltAngleProp))
                             {
                                 int tiltAngle = tiltAngleProp.GetInt32();
-                                MainThread.BeginInvokeOnMainThread(() => _slider_VerViewModel.Angle = tiltAngle);
+                                if (_allowRemoteAutoStateUpdate == true || IsAutomatic_tilt == true)
+                                {
+                                    MainThread.BeginInvokeOnMainThread(() =>
+                                    {
+                                        _slider_VerViewModel.Angle = tiltAngle;
+                                    });
+                                }
                             }
 
                             if (tiltProp.TryGetProperty("speed", out var tiltSpeedProp))
                             {
                                 int tiltSpeed = tiltSpeedProp.GetInt32();
-                                MainThread.BeginInvokeOnMainThread(() => Tilt_SpeedValue = tiltSpeed);
+                                if (_allowRemoteAutoStateUpdate)
+                                {
+                                    MainThread.BeginInvokeOnMainThread(() =>
+                                    {
+                                        Tilt_SpeedValue = tiltSpeed;
+                                    });
+                                }
                             }
 
                             if (tiltProp.TryGetProperty("mode", out var tiltModeProp))

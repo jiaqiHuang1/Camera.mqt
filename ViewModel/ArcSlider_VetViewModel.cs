@@ -195,9 +195,10 @@ namespace Camera.ViewModel
         public Action RequestRedraw;
 
         // Constructor to initialize the model and drawable
-        public ArcSlider_VerViewModel()
+        private readonly TwoArcSlider _parent;
+        public ArcSlider_VerViewModel(TwoArcSlider parent)
         {
-            
+            _parent = parent;
             _wifiModel = new WifiModel();
             _model = new ArcSliderModel();
             ArcSlider_VerDrawable = new ArcSlider_VerDrawable(this);
@@ -273,13 +274,23 @@ namespace Camera.ViewModel
             ActiveHandle = HandleType.None;
 
             if (IsPointInCircle(touchX, touchY, mainPos.X, mainPos.Y, touchThreshold))
-                ActiveHandle = HandleType.Main;
+            {
+                if (_parent.IsAutomatic_tilt == false)
+                {
+                    ActiveHandle = HandleType.Main;
+                }
+            }
             else if (IsPointInCircle(touchX, touchY, minPos.X, minPos.Y, touchThreshold))
                 ActiveHandle = HandleType.Min;
             else if (IsPointInCircle(touchX, touchY, maxPos.X, maxPos.Y, touchThreshold))
                 ActiveHandle = HandleType.Max;
             else
-                ActiveHandle = HandleType.Main;
+            {
+                if (_parent.IsAutomatic_tilt == false)
+                {
+                    ActiveHandle = HandleType.Main;
+                }
+            }
 
         }
 
