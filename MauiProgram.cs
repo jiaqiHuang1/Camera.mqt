@@ -3,6 +3,7 @@ using CommunityToolkit.Maui;
 using Camera.ViewModel;
 using Camera.View;
 using Syncfusion.Maui.Core.Hosting;
+using Microsoft.Maui.Controls.Compatibility.Hosting;
 namespace Camera
 {
     public static class MauiProgram
@@ -13,9 +14,9 @@ namespace Camera
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                //.ConfigureSyncfusionCore()
                 .UseMauiCommunityToolkitMediaElement()
-                // .UseMauiMaps()
+                .ConfigureSyncfusionCore()
+                .UseMauiCompatibility()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

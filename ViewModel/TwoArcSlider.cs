@@ -9,7 +9,7 @@ using Camera.Model;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Receiving;
 using System.Text;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
+
 
 namespace Camera.ViewModel
 {
@@ -64,7 +64,7 @@ namespace Camera.ViewModel
                     OnPropertyChanged();
 
                     // update VideoRowHeight
-                    VideoRowHeight = value ? new GridLength(400) : new GridLength(0);
+                    VideoRowHeight = value ? new GridLength(320) : new GridLength(0);
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace Camera.ViewModel
         {
             _statusPollingTimer?.Stop();
 
-            _statusPollingTimer = new System.Timers.Timer(100); // 0.1s
+            _statusPollingTimer = new System.Timers.Timer(300); // 0.1s
             _statusPollingTimer.Elapsed += async (s, e) =>
             {
                 if (IsAutomatic_pan || IsAutomatic_tilt)
@@ -331,6 +331,11 @@ namespace Camera.ViewModel
 
             _ = SubscribeToStatusAsync();
 
+        }
+
+        public async Task OnPageAppearingAsync()
+        {
+            await SubscribeToStatusAsync();
         }
 
         private async Task ToggleAutomatic_panAsync()

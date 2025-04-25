@@ -17,7 +17,15 @@ namespace Camera.View
             _viewModel.Slider_VerViewModel.RequestRedraw += () => arcSlider_Ver.Invalidate();
         }
 
-        
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            if (BindingContext is TwoArcSlider viewModel)
+            {
+                await viewModel.OnPageAppearingAsync();
+            }
+        }
+
         // During sliding interaction
         private void ArcSlider_DragInteraction(object sender, TouchEventArgs e)
         {

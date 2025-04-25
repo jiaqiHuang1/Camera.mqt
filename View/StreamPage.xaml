@@ -46,7 +46,7 @@
         
             <!-- Arc Sliders Section -->
             <Grid Grid.Row="2"
-                  RowSpacing="20"
+                  RowSpacing="0"
                   Padding="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -56,8 +56,8 @@
 
                 <HorizontalStackLayout Spacing="8"
                        HorizontalOptions="Center"
-                       Margin="0,20"
-                       HeightRequest="44">
+                       Margin="0,5"
+                       HeightRequest="35">
                     <Button Text="Pan Servo"
                             WidthRequest="120"
                             BackgroundColor="{Binding PanButtonColor}"
@@ -76,26 +76,6 @@
                 </HorizontalStackLayout>
 
 
-
-                <!-- <buttons:SfSegmentedControl x:Name="segmentedControl"
-                                            SelectedIndex="{Binding SelectedSegmentIndex, Mode=TwoWay}"
-                                            CornerRadius="10"
-                                            Stroke="Gray"
-                                            StrokeThickness="1">
-                    <buttons:SfSegmentedControl.SelectionIndicatorSettings>
-                        <buttons:SelectionIndicatorSettings
-                                SelectionIndicatorPlacement="Fill"
-                                Background="DodgerBlue"
-                                TextColor="White" />
-                    </buttons:SfSegmentedControl.SelectionIndicatorSettings>
-                    <buttons:SfSegmentedControl.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Pan Servo</x:String>
-                            <x:String>Tilt Servo</x:String>
-                        </x:Array>
-                    </buttons:SfSegmentedControl.ItemsSource>
-                </buttons:SfSegmentedControl>
--->
                 <VerticalStackLayout Grid.Row="1"
                                      Spacing="10"
                                      HorizontalOptions="Center"
