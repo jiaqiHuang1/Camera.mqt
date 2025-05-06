@@ -12,7 +12,7 @@
         <GraphicsView 
             x:Name="VehicleGraphicsView"
             Drawable="{Binding VehicleCanvas}" 
-            HeightRequest="400" 
+            HeightRequest="700" 
             WidthRequest="400" 
             HorizontalOptions="Center"
             VerticalOptions="Center"/>

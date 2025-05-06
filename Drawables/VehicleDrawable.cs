@@ -25,7 +25,7 @@ namespace Camera.Drawables
         {
 
             if (_vehicles.Count == 0)
-                return; // 没数据时不画
+                return; 
             // Draw a black border around the GraphicsView
             canvas.StrokeColor = Colors.Black;  // Set border color
             canvas.StrokeSize = 4;              // Set border thickness
